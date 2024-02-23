@@ -11,8 +11,19 @@ def main():
 
     # Medical History Section
     st.header('Medical History')
-    previous_diagnoses = st.text_area('Previous Diagnoses')
-    current_medications = st.text_area('Current Medications')
+    
+    # Previous Diagnoses
+    common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
+    selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
+    if 'Other' in selected_diagnoses:
+        other_diagnosis = st.text_input('Other Diagnosis')
+
+    # Current Medications
+    common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants','Other']
+    selected_medications = st.multiselect('Common Current Medications', common_medications)
+    if 'Other' in selected_medications:
+        other_medication = st.text_input('Other Medication')
+
     
     # Allergies Section
     common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications','Other']
