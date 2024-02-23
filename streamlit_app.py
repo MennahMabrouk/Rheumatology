@@ -60,7 +60,6 @@ def main():
     
     # Review of Systems Section
     st.header('Review of Systems')
-    with st.expander('Click to expand'):
         joint_pain = st.checkbox('Joint Pain')
         joint_stiffness = st.checkbox('Joint Stiffness')
         swelling = st.checkbox('Swelling')
