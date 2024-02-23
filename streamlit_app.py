@@ -280,6 +280,7 @@ def past_patient_reports_page():
                         st.write(f"{key}: {value}")
                     st.markdown('</div>', unsafe_allow_html=True)
 
+
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError as ve:
