@@ -1,8 +1,6 @@
 import streamlit as st
 import mysql.connector
 
-
-
 # Establish a connection to the MySQL database
 def connect_to_database():
     try:
@@ -25,6 +23,13 @@ box_styles = """
             border-radius: 10px;
             border: 1px solid #ddd;
             background-color: #9370DB; /* Purple */
+            margin-bottom: 20px;
+        }
+        .left-box {
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: #FFD700; /* Gold */
             margin-bottom: 20px;
         }
     </style>
@@ -150,6 +155,11 @@ def main():
         try:
             # You can add code here to save the entered information or perform further actions
             st.success('Patient information submitted successfully.')
+            # Display patient information in a box on the left side
+            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+            st.sidebar.write(f"Name: {name}")
+            st.sidebar.write(f"Age: {age}")
+            st.sidebar.write(f"Gender: {gender}")
         except mysql.connector.Error as e:
             st.error(f"Error inserting data into MySQL database: {e}")
 
