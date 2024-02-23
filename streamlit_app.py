@@ -1,6 +1,8 @@
 import streamlit as st
 import mysql.connector
 
+
+
 # Establish a connection to the MySQL database
 def connect_to_database():
     try:
@@ -157,4 +159,61 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submission Page</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 20px;
+    }
+    .box {
+        width: 200px;
+        height: 100px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-right: 20px;
+    }
+    #patientInfo {
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="box" id="patientInfo"></div>
+    <form id="patientForm">
+        <label for="patientName">Patient Name:</label>
+        <input type="text" id="patientName" name="patientName">
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('patientForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        var patientName = document.getElementById('patientName').value;
+        var box = document.getElementById('patientInfo');
+        box.textContent = "Patient Name: " + patientName;
+        box.style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
+
 
