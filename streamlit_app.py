@@ -52,7 +52,7 @@ def main():
         other_activities = st.text_input('Common Disease Activities')
         
     # Family History Section
-    common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis']
+    common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
     selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
     if 'Other' in selected_family_history:
         other_family_history = st.text_input('Other Family History')
