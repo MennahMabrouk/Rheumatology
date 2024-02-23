@@ -198,7 +198,7 @@ def past_patient_reports_page():
                 condition = "Patient.patient_id = %s"
             else:
                 search_type = "Name"
-                search_value = patient_name_input.strip()
+                search_value = f"%{patient_name_input.strip()}%"
                 condition = "Patient.name LIKE %s"
 
             cursor.execute(f"""
@@ -273,8 +273,24 @@ def past_patient_reports_page():
                 st.write(f"Patient Records for {search_type}: {search_value}")
                 for record in records:
                     # Filter out None values
-                    filtered_record = {key: record[i] for i, key in enumerate(cursor.column_names) if record[i] is not None}
-                    st.write(filtered_record)
+                    filtered_record = {cursor.description[i][0]: record[i] for i in range(len(cursor.description)) if record[i] is not None}
+                    # Display in a colored box
+                    st.markdown(
+                        f"""
+                        <div class="box">
+                            <h3>Patient Record</h3>
+                            <ul>
+                                <li><strong>Patient ID:</strong> {filtered_record['patient_id']}</li>
+                                <li><strong>Name:</strong> {filtered_record['name']}</li>
+                                <li><strong>Age:</strong> {filtered_record['age']}</li>
+                                <li><strong>Gender:</strong> {filtered_record['gender']}</li>
+                                <li><strong>Diagnosis:</strong> {filtered_record['diagnosis']}</li>
+                                <!-- Add more fields as needed -->
+                            </ul>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError as ve:
@@ -287,6 +303,28 @@ def past_patient_reports_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
+
+# Custom CSS for styling boxes with colors
+box_styles = """
+    <style>
+        .box {
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: #9370DB; /* Purple */
+            margin-bottom: 20px;
+            color: white;
+        }
+        .box h3 {
+            margin-top: 0;
+        }
+    </style>
+"""
+
+# Inject custom CSS
+st.markdown(box_styles, unsafe_allow_html=True)
+
+past_patient_reports_page()
 
 
 if __name__ == "__main__":
