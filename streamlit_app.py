@@ -121,6 +121,15 @@ def main():
         # You can add code here to save the entered information or perform further actions
         st.success('Patient information submitted successfully.')
 
+    # Text with different sizes
+    st.markdown('<h1>Heading 1</h1>', unsafe_allow_html=True)
+    st.markdown('<h2>Heading 2</h2>', unsafe_allow_html=True)
+    st.markdown('<h3>Heading 3</h3>', unsafe_allow_html=True)
+    st.markdown('<h4>Heading 4</h4>', unsafe_allow_html=True)
+    st.markdown('<h5>Heading 5</h5>', unsafe_allow_html=True)
+    st.markdown('<h6>Heading 6</h6>', unsafe_allow_html=True)
+
+
 if __name__ == "__main__":
     main()
 
