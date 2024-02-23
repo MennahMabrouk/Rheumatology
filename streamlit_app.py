@@ -50,11 +50,42 @@ def main():
 
     # Medical History Section
     st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
+
+    # Previous Diagnoses
     common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
     selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
     if 'Other' in selected_diagnoses:
         other_diagnosis = st.text_input('Other Diagnosis')
+        cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (other_diagnosis,))
+        conn.commit()
 
+    # Current Medications
+    common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants','Other']
+    selected_medications = st.multiselect('Common Current Medications', common_medications)
+    if 'Other' in selected_medications:
+        other_medication = st.text_input('Other Medication')
+        cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (other_medication,))
+        conn.commit()
+
+    # Allergies Section
+    common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications','Other']
+    selected_allergies = st.multiselect('Common Allergies', common_allergies)
+    if 'Other' in selected_allergies:
+        other_allergy = st.text_input('Other Allergy')
+        cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (other_allergy,))
+        conn.commit()
+
+    # Surgeries Section
+    common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery','Other']
+    selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
+    if 'Other' in selected_surgeries:
+        other_surgery = st.text_input('Other Surgery or Procedure')
+        cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery,))
+        conn.commit()
+
+    cursor.close()
+    conn.close()
+    
     # Insert patient information into the database
     if st.button('Submit'):
         try:
