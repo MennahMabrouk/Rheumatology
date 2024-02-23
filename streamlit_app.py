@@ -277,7 +277,7 @@ def past_patient_reports_page():
                     # Display in a colored box
                     st.markdown(
                         f"""
-                        <div class="box">
+                        <div style="background-color: #9370DB; padding: 20px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; color: white;">
                             <h3>Patient Record</h3>
                             <ul>
                                 <li><strong>Patient ID:</strong> {filtered_record['patient_id']}</li>
@@ -303,26 +303,6 @@ def past_patient_reports_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
-
-# Custom CSS for styling boxes with colors
-box_styles = """
-    <style>
-        .box {
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            background-color: #9370DB; /* Purple */
-            margin-bottom: 20px;
-            color: white;
-        }
-        .box h3 {
-            margin-top: 0;
-        }
-    </style>
-"""
-
-# Inject custom CSS
-st.markdown(box_styles, unsafe_allow_html=True)
 
 past_patient_reports_page()
 
