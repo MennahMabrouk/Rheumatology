@@ -72,18 +72,17 @@ def main():
     st.header('Physical Examination Findings')
 
     # Expander for Physical Examination Findings
-    with st.expander('Click to expand'):
-        joint_swelling = st.checkbox('Joint Swelling')
-        joint_tenderness = st.checkbox('Joint Tenderness')
-        joint_warmth = st.checkbox('Joint Warmth')
-        joint_redness = st.checkbox('Joint Redness')
-        limited_range_of_motion = st.checkbox('Limited Range of Motion')
-        muscle_weakness = st.checkbox('Muscle Weakness')
+    joint_swelling = st.checkbox('Joint Swelling')
+    joint_tenderness = st.checkbox('Joint Tenderness')
+    joint_warmth = st.checkbox('Joint Warmth')
+    joint_redness = st.checkbox('Joint Redness')
+    limited_range_of_motion = st.checkbox('Limited Range of Motion')
+    muscle_weakness = st.checkbox('Muscle Weakness')
 
-        # 'Other' checkbox and text input for other findings
-        other_finding = st.checkbox('Other')
-        if other_finding:
-            other_finding_text = st.text_input('Specify Other Finding')
+    # 'Other' checkbox and text input for other findings
+    other_finding = st.checkbox('Other')
+    if other_finding:
+        other_finding_text = st.text_input('Specify Other Finding')
 
 
     # Diagnostic Tests Section
