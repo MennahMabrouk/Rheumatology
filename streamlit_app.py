@@ -274,13 +274,12 @@ def past_patient_reports_page():
                 for record in records:
                     # Filter out None values
                     filtered_record = {key: record[i] for i, key in enumerate(cursor.column_names) if record[i] is not None}
-                    # Format the record as a string
-                    formatted_output = "\n".join([f"{key}: {value}" for key, value in filtered_record.items()])
+                    # Format the record as a string with HTML line breaks
+                    formatted_output = "<br>".join([f"{key}: {value}" for key, value in filtered_record.items()])
                     # Display the formatted output within the colored box
                     st.markdown(f'<div class="box">{formatted_output}</div>', unsafe_allow_html=True)
+                     
                 
-                                
-
 
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
