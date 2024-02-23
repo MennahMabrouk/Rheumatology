@@ -52,8 +52,8 @@ def main():
     if 'Other' in selected_surgeries:
         other_surgery = st.text_input('Other Surgery or Procedure')
 
-    # Rheumatologic History Section
-    st.markdown('<div class="box"><h4>Rheumatologic History</h4></div>', unsafe_allow_html=True)
+    # Rheumatologic History and Family History Section
+    st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
 
     # Previous Rheumatologic Diagnoses
     common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout','Other']
@@ -67,9 +67,7 @@ def main():
     if 'Other' in selected_activity:
         other_activities = st.text_input('Common Disease Activities')
 
-    # Family History Section
-    st.markdown('<div class="box"><h4>Family History</h4></div>', unsafe_allow_html=True)
-
+    # Family History
     common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
     selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
     if 'Other' in selected_family_history:
@@ -118,4 +116,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
