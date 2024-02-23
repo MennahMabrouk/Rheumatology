@@ -93,7 +93,7 @@ def main():
 
     # Notes and Comments Section
     st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True)
-    Notes_and_Comments = st.text_input(label='Notes and Comments')
+    Notes_and_Comments = st.text_input()
 
     # Submit Button
     if st.button('Submit'):
