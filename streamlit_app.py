@@ -68,6 +68,9 @@ def main():
         fever = st.checkbox('Fever')
         skin_rashes = st.checkbox('Skin Rashes or Lesions')
         eye_problems = st.checkbox('Eye Problems')
+        
+    # Physical Examination Findings Section
+    st.header('Physical Examination Findings')
 
     # Expander for Physical Examination Findings
     with st.expander('Click to expand'):
