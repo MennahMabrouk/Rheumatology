@@ -16,7 +16,7 @@ def main():
     
     # Allergies Section
     st.header('Allergies')
-    common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications']
+    common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications','Other']
     selected_allergies = st.multiselect('Common Allergies', common_allergies)
     if 'Other' in selected_allergies:
         other_allergy = st.text_input('Other Allergy')
