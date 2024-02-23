@@ -15,7 +15,7 @@ def main():
     current_medications = st.text_area('Current Medications')
     
     # Allergies Section
-    st.header('Allergies')
+    st.text_area('Allergies')
     common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications','Other']
     selected_allergies = st.multiselect('Common Allergies', common_allergies)
     if 'Other' in selected_allergies:
