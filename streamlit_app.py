@@ -20,7 +20,11 @@ def main():
     if 'Other' in selected_allergies:
         other_allergy = st.text_input('Other Allergy')
 
-    surgeries = st.text_area('Past Surgeries or Procedures')
+    common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery','other']
+    selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
+    if 'Other' in selected_surgeries:
+        other_surgery = st.text_input('Other Surgery or Procedure')
+
     family_history = st.text_area('Family History of Rheumatic Diseases')
 
     # Rheumatologic History Section
