@@ -83,6 +83,11 @@ def main():
     fever = st.checkbox('Fever')
     skin_rashes = st.checkbox('Skin Rashes or Lesions')
     eye_problems = st.checkbox('Eye Problems')
+    
+    # 'Other' checkbox and text input for other Systems Section
+    other_system = st.checkbox('Other')
+    if other_system:
+        other_system_text = st.text_input('Specify Other Systems Section')
 
 
     # Physical Examination Findings Section
