@@ -3,11 +3,12 @@ import streamlit as st
 # Custom CSS for styling the entire page with a purple frame
 page_styles = """
     <style>
-        .report-container {
+        body {
             padding: 20px;
             border-radius: 20px;
             border: 2px solid #9370DB; /* Purple */
             background-color: #f0f0f0; /* Light gray */
+            margin: 20px;
         }
     </style>
 """
@@ -36,7 +37,7 @@ def main():
     st.markdown(box_styles, unsafe_allow_html=True)
 
     # Container for the entire report
-    st.markdown('<div class="report-container">', unsafe_allow_html=True)
+    # st.markdown('<div class="report-container">', unsafe_allow_html=True)
 
     # Patient Information Section
     st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
@@ -118,6 +119,26 @@ def main():
     other_finding = st.checkbox('Other')
     if other_finding:
         other_finding_text = st.text_input('Specify Other Finding')
+
+    # Diagnostic Tests Section
+    st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
+    diagnostic_tests = st.text_area('Enter Diagnostic Tests')
+
+    # Notes and Comments Section
+    st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
+    notes_and_comments = st.text_area('Enter Notes and Comments')
+
+    # Close the report-container
+    # st.markdown('</div>', unsafe_allow_html=True)
+
+    # Submit Button
+    if st.button('Submit'):
+        # You can add code here to save the entered information or perform further actions
+        st.success('Patient information submitted successfully.')
+
+
+if __name__ == "__main__":
+    main()
 
     # Diagnostic Tests Section
     st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
