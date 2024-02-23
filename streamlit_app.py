@@ -29,41 +29,49 @@ def main():
 
     # Review of Systems Section
     st.header('Review of Systems')
-    joint_pain = st.checkbox('Joint Pain')
-    joint_stiffness = st.checkbox('Joint Stiffness')
-    swelling = st.checkbox('Swelling')
-    fatigue = st.checkbox('Fatigue')
-    fever = st.checkbox('Fever')
-    skin_rashes = st.checkbox('Skin Rashes or Lesions')
-    eye_problems = st.checkbox('Eye Problems')
+    with st.beta_expander('Click to expand'):
+        joint_pain = st.checkbox('Joint Pain')
+        joint_stiffness = st.checkbox('Joint Stiffness')
+        swelling = st.checkbox('Swelling')
+        fatigue = st.checkbox('Fatigue')
+        fever = st.checkbox('Fever')
+        skin_rashes = st.checkbox('Skin Rashes or Lesions')
+        eye_problems = st.checkbox('Eye Problems')
 
     # Physical Examination Findings Section
     st.header('Physical Examination Findings')
-    # You can add relevant fields for physical examination findings here
+    with st.beta_expander('Click to expand'):
+        st.write("- Checkboxes for Physical Examination Findings")
 
     # Diagnostic Tests Section
     st.header('Diagnostic Tests')
-    # You can add relevant fields for diagnostic tests here
+    with st.beta_expander('Click to expand'):
+        st.write("- Checkboxes for Diagnostic Tests")
 
     # Assessment and Plan Section
     st.header('Assessment and Plan')
-    # You can add relevant fields for assessment and plan here
+    with st.beta_expander('Click to expand'):
+        st.write("- Checkboxes for Assessment and Plan")
 
     # Patient Education and Counseling Section
     st.header('Patient Education and Counseling')
-    # You can add relevant fields for patient education and counseling here
+    with st.beta_expander('Click to expand'):
+        st.write("- Checkboxes for Patient Education and Counseling")
 
     # Documentation of Consent and Referrals Section
     st.header('Documentation of Consent and Referrals')
-    # You can add relevant fields for documentation of consent and referrals here
+    with st.beta_expander('Click to expand'):
+        st.write("- Checkboxes for Documentation of Consent and Referrals")
 
     # Follow-up Instructions Section
     st.header('Follow-up Instructions')
-    # You can add relevant fields for follow-up instructions here
+    with st.beta_expander('Click to expand'):
+        st.write("- Checkboxes for Follow-up Instructions")
 
     # Notes and Comments Section
     st.header('Notes and Comments')
-    # You can add relevant fields for notes and comments here
+    with st.beta_expander('Click to expand'):
+        st.write("- Checkboxes for Notes and Comments")
 
     # Submit Button
     if st.button('Submit'):
