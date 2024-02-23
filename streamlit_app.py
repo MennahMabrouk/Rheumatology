@@ -60,13 +60,13 @@ def main():
     
     # Review of Systems Section
     st.header('Review of Systems')
-        joint_pain = st.checkbox('Joint Pain')
-        joint_stiffness = st.checkbox('Joint Stiffness')
-        swelling = st.checkbox('Swelling')
-        fatigue = st.checkbox('Fatigue')
-        fever = st.checkbox('Fever')
-        skin_rashes = st.checkbox('Skin Rashes or Lesions')
-        eye_problems = st.checkbox('Eye Problems')
+    joint_pain = st.checkbox('Joint Pain')
+    joint_stiffness = st.checkbox('Joint Stiffness')
+    swelling = st.checkbox('Swelling')
+    fatigue = st.checkbox('Fatigue')
+    fever = st.checkbox('Fever')
+    skin_rashes = st.checkbox('Skin Rashes or Lesions')
+    eye_problems = st.checkbox('Eye Problems')
         
     # Physical Examination Findings Section
     st.header('Physical Examination Findings')
