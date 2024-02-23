@@ -274,7 +274,8 @@ def past_patient_reports_page():
                 for record in records:
                     # Filter out None values
                     filtered_record = {key: record[i] for i, key in enumerate(cursor.column_names) if record[i] is not None}
-                    st.write(filtered_record)
+                    # Display the filtered record in a colored box
+                    st.markdown('<div class="box">' + str(filtered_record) + '</div>', unsafe_allow_html=True)
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError as ve:
