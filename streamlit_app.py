@@ -63,16 +63,32 @@ def main():
             cursor.execute(insert_patient_query, (name, age, gender))
             conn.commit()
 
-            # Insert medical history information into the MedicalHistory table
+            # Insert medical history information into the PatientMedicalHistory table
             for diagnosis in selected_diagnoses:
-                insert_diagnosis_query = "INSERT INTO MedicalHistory (patient_id, diagnosis) VALUES (%s, %s)"
-                cursor.execute(insert_diagnosis_query, (cursor.lastrowid, diagnosis))
+                insert_diagnosis_query = "INSERT INTO Diagnosis (name) VALUES (%s)"
+                cursor.execute(insert_diagnosis_query, (diagnosis,))
                 conn.commit()
 
-            # If Other Diagnosis is provided, insert it into the MedicalHistory table
+                # Get the diagnosis_id for the inserted diagnosis
+                diagnosis_id = cursor.lastrowid
+
+                # Insert into the PatientMedicalHistory table
+                insert_patient_medical_history_query = "INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)"
+                cursor.execute(insert_patient_medical_history_query, (cursor.lastrowid, diagnosis_id))
+                conn.commit()
+
+            # If Other Diagnosis is provided, insert it into the Diagnosis table
             if 'Other' in selected_diagnoses:
-                insert_other_diagnosis_query = "INSERT INTO MedicalHistory (patient_id, diagnosis) VALUES (%s, %s)"
-                cursor.execute(insert_other_diagnosis_query, (cursor.lastrowid, other_diagnosis))
+                insert_other_diagnosis_query = "INSERT INTO Diagnosis (name) VALUES (%s)"
+                cursor.execute(insert_other_diagnosis_query, (other_diagnosis,))
+                conn.commit()
+
+                # Get the diagnosis_id for the inserted diagnosis
+                other_diagnosis_id = cursor.lastrowid
+
+                # Insert into the PatientMedicalHistory table
+                insert_patient_medical_history_query = "INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)"
+                cursor.execute(insert_patient_medical_history_query, (cursor.lastrowid, other_diagnosis_id))
                 conn.commit()
 
             st.success('Patient information submitted successfully.')
@@ -85,5 +101,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
