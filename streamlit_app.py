@@ -86,9 +86,9 @@ def main():
 
 
     # Diagnostic Tests Section
-    st.header('Diagnostic Tests')
-    with st.expander('Click to expand'):
-        st.write("- Checkboxes for Diagnostic Tests")
+    st.markdown('<h4>Diagnostic Tests</h4>', unsafe_allow_html=True)
+    Diagnostic_Tests = st.text_input(label='')
+
 
     # Notes and Comments Section
     st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True)
