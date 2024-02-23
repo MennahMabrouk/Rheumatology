@@ -69,10 +69,15 @@ def main():
         skin_rashes = st.checkbox('Skin Rashes or Lesions')
         eye_problems = st.checkbox('Eye Problems')
 
-    # Physical Examination Findings Section
-    st.header('Physical Examination Findings')
+    # Expander for Physical Examination Findings
     with st.expander('Click to expand'):
-        st.write("- Checkboxes for Physical Examination Findings")
+        st.subheader('Common Findings')
+        common_findings = ['Joint Swelling', 'Joint Tenderness', 'Joint Warmth', 'Joint Redness', 'Limited Range of Motion', 'Muscle Weakness']
+        selected_findings = st.multiselect('Select Common Findings', common_findings)
+
+        if 'Other' in selected_findings:
+            other_finding = st.text_input('Other Finding')
+
 
     # Diagnostic Tests Section
     st.header('Diagnostic Tests')
