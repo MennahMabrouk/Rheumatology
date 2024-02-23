@@ -186,7 +186,69 @@ def past_patient_reports_page():
     cursor = conn.cursor()
 
     # Execute SQL query to fetch past patient records
-    cursor.execute("SELECT * FROM PastPatientRecords")
+    cursor.execute("""
+        SELECT 
+            Patient.patient_id,
+            Patient.name,
+            Patient.age,
+            Patient.gender,
+            Diagnosis.name AS diagnosis,
+            Medication.name AS medication,
+            Allergy.name AS allergy,
+            Surgery.name AS surgery,
+            Activity.name AS activity,
+            FamilyHistory.name AS family_history,
+            ReviewOfSystems.joint_pain,
+            ReviewOfSystems.joint_stiffness,
+            ReviewOfSystems.swelling,
+            ReviewOfSystems.fatigue,
+            ReviewOfSystems.fever,
+            ReviewOfSystems.skin_rashes,
+            ReviewOfSystems.eye_problems,
+            PhysicalExamination.joint_swelling,
+            PhysicalExamination.joint_tenderness,
+            PhysicalExamination.joint_warmth,
+            PhysicalExamination.joint_redness,
+            PhysicalExamination.limited_range_of_motion,
+            PhysicalExamination.muscle_weakness,
+            PhysicalExamination.other_finding,
+            DiagnosticTests.test_results,
+            NotesAndComments.notes_and_comments
+        FROM 
+            Patient
+        LEFT JOIN 
+            PatientMedicalHistory ON Patient.patient_id = PatientMedicalHistory.patient_id
+        LEFT JOIN 
+            Diagnosis ON PatientMedicalHistory.diagnosis_id = Diagnosis.diagnosis_id
+        LEFT JOIN 
+            PatientCurrentMedication ON Patient.patient_id = PatientCurrentMedication.patient_id
+        LEFT JOIN 
+            Medication ON PatientCurrentMedication.medication_id = Medication.medication_id
+        LEFT JOIN 
+            PatientAllergy ON Patient.patient_id = PatientAllergy.patient_id
+        LEFT JOIN 
+            Allergy ON PatientAllergy.allergy_id = Allergy.allergy_id
+        LEFT JOIN 
+            PatientSurgery ON Patient.patient_id = PatientSurgery.patient_id
+        LEFT JOIN 
+            Surgery ON PatientSurgery.surgery_id = Surgery.surgery_id
+        LEFT JOIN 
+            PatientActivity ON Patient.patient_id = PatientActivity.patient_id
+        LEFT JOIN 
+            Activity ON PatientActivity.activity_id = Activity.activity_id
+        LEFT JOIN 
+            PatientFamilyHistory ON Patient.patient_id = PatientFamilyHistory.patient_id
+        LEFT JOIN 
+            FamilyHistory ON PatientFamilyHistory.history_id = FamilyHistory.history_id
+        LEFT JOIN 
+            ReviewOfSystems ON Patient.patient_id = ReviewOfSystems.patient_id
+        LEFT JOIN 
+            PhysicalExamination ON Patient.patient_id = PhysicalExamination.patient_id
+        LEFT JOIN 
+            DiagnosticTests ON Patient.patient_id = DiagnosticTests.patient_id
+        LEFT JOIN 
+            NotesAndComments ON Patient.patient_id = NotesAndComments.patient_id
+    """)
 
     # Fetch all the records
     records = cursor.fetchall()
@@ -202,6 +264,7 @@ def past_patient_reports_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
+
 
 
 if __name__ == "__main__":
