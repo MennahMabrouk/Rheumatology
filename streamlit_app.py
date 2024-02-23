@@ -279,6 +279,7 @@ def past_patient_reports_page():
                     for key, value in filtered_record.items():
                         st.write(f"{key}: {value}")
                     st.markdown('</div>', unsafe_allow_html=True)
+                
 
 
             else:
