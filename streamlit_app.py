@@ -83,9 +83,6 @@ def main():
         cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery,))
         conn.commit()
 
-    cursor.close()
-    conn.close()
-    
     # Insert patient information into the database
     if st.button('Submit'):
         try:
@@ -132,3 +129,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
