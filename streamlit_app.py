@@ -272,7 +272,9 @@ def past_patient_reports_page():
             if records:
                 st.write(f"Patient Records for {search_type}: {search_value}")
                 for record in records:
-                    st.write(record)
+                    # Filter out None values
+                    filtered_record = {key: value for key, value in record.items() if value is not None}
+                    st.write(filtered_record)
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError:
@@ -283,6 +285,7 @@ def past_patient_reports_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
+
 
 
 if __name__ == "__main__":
