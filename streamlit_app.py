@@ -36,18 +36,18 @@ def main():
     if 'Other' in selected_surgeries:
         other_surgery = st.text_input('Other Surgery or Procedure')
 
+    # Rheumatologic History Section
+    st.header('Rheumatologic History')
+    previous_rheumatologic_diagnoses = st.text_area('Previous Rheumatologic Diagnoses')
+    disease_activity = st.text_area('Disease Activity')
+    response_to_treatments = st.text_area('Response to Previous Treatments')
     # Family History Section
     common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis']
     selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
     if 'Other' in selected_family_history:
         other_family_history = st.text_input('Other Family History')
 
-    # Rheumatologic History Section
-    st.header('Rheumatologic History')
-    previous_rheumatologic_diagnoses = st.text_area('Previous Rheumatologic Diagnoses')
-    disease_activity = st.text_area('Disease Activity')
-    response_to_treatments = st.text_area('Response to Previous Treatments')
-
+    
     # Review of Systems Section
     st.header('Review of Systems')
     with st.expander('Click to expand'):
