@@ -177,9 +177,32 @@ def new_patient_page():
     conn.close()
 
 def past_patient_reports_page():
-    # Here you can fetch and display past patient reports from the database
-    st.title("Past Patient Reports")
-    # Add your code to fetch and display past patient reports here
+    # Connect to the MySQL database
+    conn = connect_to_database()
+    if conn is None:
+        return
+
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+    # Execute SQL query to fetch past patient records
+    cursor.execute("SELECT * FROM PastPatientRecords")
+
+    # Fetch all the records
+    records = cursor.fetchall()
+
+    # Display the records
+    if records:
+        st.write("Past Patient Records:")
+        for record in records:
+            st.write(record)
+    else:
+        st.write("No past patient records found.")
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
 
 if __name__ == "__main__":
     main()
