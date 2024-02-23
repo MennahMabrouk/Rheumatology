@@ -29,7 +29,7 @@ def main():
 
     # Review of Systems Section
     st.header('Review of Systems')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         joint_pain = st.checkbox('Joint Pain')
         joint_stiffness = st.checkbox('Joint Stiffness')
         swelling = st.checkbox('Swelling')
@@ -40,37 +40,37 @@ def main():
 
     # Physical Examination Findings Section
     st.header('Physical Examination Findings')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         st.write("- Checkboxes for Physical Examination Findings")
 
     # Diagnostic Tests Section
     st.header('Diagnostic Tests')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         st.write("- Checkboxes for Diagnostic Tests")
 
     # Assessment and Plan Section
     st.header('Assessment and Plan')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         st.write("- Checkboxes for Assessment and Plan")
 
     # Patient Education and Counseling Section
     st.header('Patient Education and Counseling')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         st.write("- Checkboxes for Patient Education and Counseling")
 
     # Documentation of Consent and Referrals Section
     st.header('Documentation of Consent and Referrals')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         st.write("- Checkboxes for Documentation of Consent and Referrals")
 
     # Follow-up Instructions Section
     st.header('Follow-up Instructions')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         st.write("- Checkboxes for Follow-up Instructions")
 
     # Notes and Comments Section
     st.header('Notes and Comments')
-    with st.beta_expander('Click to expand'):
+    with st.expander('Click to expand'):
         st.write("- Checkboxes for Notes and Comments")
 
     # Submit Button
@@ -80,3 +80,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
