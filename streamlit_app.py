@@ -83,45 +83,66 @@ def main():
         cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery,))
         conn.commit()
 
-    # Insert patient information into the database
-    if st.button('Submit'):
-        try:
-            # SQL query to insert patient information into the Patient table
-            insert_patient_query = "INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)"
-            cursor.execute(insert_patient_query, (name, age, gender))
-            conn.commit()
+    # Rheumatologic History and Family History Section
+    st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
 
-            # Insert medical history information into the PatientMedicalHistory table
-            for diagnosis in selected_diagnoses:
-                insert_diagnosis_query = "INSERT INTO Diagnosis (name) VALUES (%s)"
-                cursor.execute(insert_diagnosis_query, (diagnosis,))
-                conn.commit()
+    # Previous Rheumatologic Diagnoses
+    common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout','Other']
+    selected_rheumatologic_diagnoses = st.multiselect('Common Previous Rheumatologic Diagnoses', common_rheumatologic_diagnoses)
+    if 'Other' in selected_rheumatologic_diagnoses:
+        other_rheumatologic_diagnosis = st.text_input('Other Diagnosis')
+        cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (other_rheumatologic_diagnosis,))
+        conn.commit()
 
-                # Get the diagnosis_id for the inserted diagnosis
-                diagnosis_id = cursor.lastrowid
+    # Common Disease Activities
+    common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe','Other']
+    selected_activity = st.multiselect('Select Disease Activity', common_activities)
+    if 'Other' in selected_activity:
+        other_activities = st.text_input('Common Disease Activities')
+        cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (other_activities,))
+        conn.commit()
 
-                # Insert into the PatientMedicalHistory table
-                insert_patient_medical_history_query = "INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)"
-                cursor.execute(insert_patient_medical_history_query, (cursor.lastrowid, diagnosis_id))
-                conn.commit()
+    # Family History
+    common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
+    selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
+    if 'Other' in selected_family_history:
+        other_family_history = st.text_input('Other Family History')
+        cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (other_family_history,))
+        conn.commit()
 
-            # If Other Diagnosis is provided, insert it into the Diagnosis table
-            if 'Other' in selected_diagnoses:
-                insert_other_diagnosis_query = "INSERT INTO Diagnosis (name) VALUES (%s)"
-                cursor.execute(insert_other_diagnosis_query, (other_diagnosis,))
-                conn.commit()
+    # Review of Systems Section
+    st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
 
-                # Get the diagnosis_id for the inserted diagnosis
-                other_diagnosis_id = cursor.lastrowid
+    joint_pain = st.checkbox('Joint Pain')
+    joint_stiffness = st.checkbox('Joint Stiffness')
+    swelling = st.checkbox('Swelling')
+    fatigue = st.checkbox('Fatigue')
+    fever = st.checkbox('Fever')
+    skin_rashes = st.checkbox('Skin Rashes or Lesions')
+    eye_problems = st.checkbox('Eye Problems')
 
-                # Insert into the PatientMedicalHistory table
-                insert_patient_medical_history_query = "INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)"
-                cursor.execute(insert_patient_medical_history_query, (cursor.lastrowid, other_diagnosis_id))
-                conn.commit()
+    # Physical Examination Findings Section
+    st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
 
-            st.success('Patient information submitted successfully.')
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting data into MySQL database: {e}")
+    # Expander for Physical Examination Findings
+    joint_swelling = st.checkbox('Joint Swelling')
+    joint_tenderness = st.checkbox('Joint Tenderness')
+    joint_warmth = st.checkbox('Joint Warmth')
+    joint_redness = st.checkbox('Joint Redness')
+    limited_range_of_motion = st.checkbox('Limited Range of Motion')
+    muscle_weakness = st.checkbox('Muscle Weakness')
+    # 'Other' checkbox and text input for other findings
+    other_finding = st.checkbox('Other')
+    if other_finding:
+        other_finding_text = st.text_input('Specify Other Finding')
+
+    # Diagnostic Tests Section
+    st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
+    diagnostic_tests = st.text_area('Enter Diagnostic Tests')
+
+    # Notes and Comments Section
+    st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
+    notes_and_comments = st.text_area('Enter Notes and Comments')
 
     # Close the cursor and connection
     cursor.close()
