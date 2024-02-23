@@ -1,4 +1,19 @@
 import streamlit as st
+import mysql.connector
+
+# Establish a connection to the MySQL database
+def connect_to_database():
+    try:
+        conn = mysql.connector.connect(
+            host="sql.freedb.tech",
+            user="freedb_Mennah",
+            password="?Fhu@EyzAe5BUPq",
+            database="freedb_Rheumatology"
+        )
+        return conn
+    except mysql.connector.Error as e:
+        st.error(f"Error connecting to MySQL database: {e}")
+        return None
 
 # Custom CSS for styling boxes with colors
 box_styles = """
@@ -18,6 +33,11 @@ def main():
 
     # Inject custom CSS
     st.markdown(box_styles, unsafe_allow_html=True)
+
+    # Connect to the MySQL database
+    conn = connect_to_database()
+    if conn is None:
+        return
 
     # Patient Information Section
     st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
