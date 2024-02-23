@@ -20,7 +20,7 @@ def main():
     if 'Other' in selected_allergies:
         other_allergy = st.text_input('Other Allergy')
 
-    common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery','other']
+    common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery','Other']
     selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
     if 'Other' in selected_surgeries:
         other_surgery = st.text_input('Other Surgery or Procedure')
