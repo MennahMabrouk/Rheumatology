@@ -114,8 +114,7 @@ def main():
 
     # Notes and Comments Section
     st.header('Notes and Comments')
-    with st.expander('Click to expand'):
-        st.write("- Checkboxes for Notes and Comments")
+    Notes_and_Comments = st.text_input('Notes and Comments')
 
     # Submit Button
     if st.button('Submit'):
