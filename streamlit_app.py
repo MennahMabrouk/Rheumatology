@@ -278,7 +278,11 @@ def past_patient_reports_page():
         except ValueError:
             st.error("Please enter a valid patient ID.")
     else:
-        st.info("Enter a patient ID 
+        st.info("Enter a patient ID or name to search.")
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
 
 
 if __name__ == "__main__":
