@@ -186,8 +186,8 @@ def past_patient_reports_page():
     cursor = conn.cursor()
 
     # Text input for searching patient by ID
-    patient_id_input = st.text_input("Enter Patient ID:")
-    patient_name_input = st.text_input("Enter Patient Name:")
+    patient_id_input = st.text_input("Enter Patient ID:", key="patient_id_input")
+    patient_name_input = st.text_input("Enter Patient Name:", key="patient_name_input")
 
     # Execute SQL query to fetch past patient records if patient ID or name is provided
     if patient_id_input or patient_name_input:
@@ -198,7 +198,7 @@ def past_patient_reports_page():
                 condition = "Patient.patient_id = %s"
             else:
                 search_type = "Name"
-                search_value = f"%{patient_name_input.strip()}%"
+                search_value = patient_name_input.strip()
                 condition = "Patient.name LIKE %s"
 
             cursor.execute(f"""
@@ -273,24 +273,8 @@ def past_patient_reports_page():
                 st.write(f"Patient Records for {search_type}: {search_value}")
                 for record in records:
                     # Filter out None values
-                    filtered_record = {cursor.description[i][0]: record[i] for i in range(len(cursor.description)) if record[i] is not None}
-                    # Display in a colored box
-                    st.markdown(
-                        f"""
-                        <div style="background-color: #9370DB; padding: 20px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; color: white;">
-                            <h3>Patient Record</h3>
-                            <ul>
-                                <li><strong>Patient ID:</strong> {filtered_record['patient_id']}</li>
-                                <li><strong>Name:</strong> {filtered_record['name']}</li>
-                                <li><strong>Age:</strong> {filtered_record['age']}</li>
-                                <li><strong>Gender:</strong> {filtered_record['gender']}</li>
-                                <li><strong>Diagnosis:</strong> {filtered_record['diagnosis']}</li>
-                                <!-- Add more fields as needed -->
-                            </ul>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                    filtered_record = {key: record[i] for i, key in enumerate(cursor.column_names) if record[i] is not None}
+                    st.write(filtered_record)
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError as ve:
@@ -303,8 +287,6 @@ def past_patient_reports_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
-
-past_patient_reports_page()
 
 
 if __name__ == "__main__":
