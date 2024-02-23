@@ -45,8 +45,12 @@ def main():
     if 'Other' in selected_rheumatologic_diagnoses:
         other_rheumatologic_diagnosis = st.text_input('Other Diagnosis')
 
-    disease_activity = st.text_area('Disease Activity')
-    response_to_treatments = st.text_area('Response to Previous Treatments')
+   # Common Disease Activities
+    common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe','Other']
+    selected_activity = st.multiselect('Select Disease Activity', common_activities)
+    if 'Other' in selected_activity:
+        other_activities = st.text_input('Common Disease Activities')
+        
     # Family History Section
     common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis']
     selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
