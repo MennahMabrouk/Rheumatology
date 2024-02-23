@@ -1,5 +1,17 @@
 import streamlit as st
 
+# Custom CSS for styling the entire page with a purple frame
+page_styles = """
+    <style>
+        .report-container {
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #9370DB; /* Purple */
+            background-color: #f0f0f0; /* Light gray */
+        }
+    </style>
+"""
+
 # Custom CSS for styling boxes with colors
 box_styles = """
     <style>
@@ -8,6 +20,7 @@ box_styles = """
             border-radius: 10px;
             border: 1px solid #ddd;
             background-color: #9370DB; /* Purple */
+            color: white;
             margin-bottom: 20px;
         }
     </style>
@@ -16,8 +29,14 @@ box_styles = """
 def main():
     st.title('Rheumatology Patient Checking Chart')
 
-    # Inject custom CSS
+    # Inject custom CSS for the page
+    st.markdown(page_styles, unsafe_allow_html=True)
+
+    # Inject custom CSS for the boxes
     st.markdown(box_styles, unsafe_allow_html=True)
+
+    # Container for the entire report
+    st.markdown('<div class="report-container">', unsafe_allow_html=True)
 
     # Patient Information Section
     st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
@@ -107,6 +126,9 @@ def main():
     # Notes and Comments Section
     st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
     notes_and_comments = st.text_area('Enter Notes and Comments')
+
+    # Close the report-container
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Submit Button
     if st.button('Submit'):
