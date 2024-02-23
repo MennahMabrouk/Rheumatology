@@ -13,7 +13,14 @@ def main():
     st.header('Medical History')
     previous_diagnoses = st.text_area('Previous Diagnoses')
     current_medications = st.text_area('Current Medications')
-    allergies = st.text_area('Allergies')
+    
+    # Allergies Section
+    st.header('Allergies')
+    common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications']
+    selected_allergies = st.multiselect('Common Allergies', common_allergies)
+    if 'Other' in selected_allergies:
+        other_allergy = st.text_input('Other Allergy')
+
     surgeries = st.text_area('Past Surgeries or Procedures')
     family_history = st.text_area('Family History of Rheumatic Diseases')
 
