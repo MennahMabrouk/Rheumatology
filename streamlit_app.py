@@ -1,13 +1,20 @@
 import streamlit as st
 
-# Custom CSS for styling boxes
+# Custom CSS for styling boxes with colors
 box_styles = """
     <style>
-        .box {
+        .box-info {
             padding: 20px;
             border-radius: 10px;
             border: 1px solid #ddd;
-            background-color: #f0f0f0;
+            background-color: #f0f8ff; /* Light blue */
+            margin-bottom: 20px;
+        }
+        .box-warning {
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: #fffacd; /* Lemon chiffon */
             margin-bottom: 20px;
         }
     </style>
@@ -20,13 +27,13 @@ def main():
     st.markdown(box_styles, unsafe_allow_html=True)
 
     # Patient Information Section
-    st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+    st.markdown('<div class="box-info"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
     name = st.text_input('Name')
     age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
     # Medical History Section
-    st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
+    st.markdown('<div class="box-info"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
     # Previous Diagnoses
     common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
@@ -53,7 +60,7 @@ def main():
         other_surgery = st.text_input('Other Surgery or Procedure')
 
     # Rheumatologic History and Family History Section
-    st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
+    st.markdown('<div class="box-warning"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
 
     # Previous Rheumatologic Diagnoses
     common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout','Other']
@@ -74,7 +81,7 @@ def main():
         other_family_history = st.text_input('Other Family History')
 
     # Review of Systems Section
-    st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
+    st.markdown('<div class="box-info"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
 
     joint_pain = st.checkbox('Joint Pain')
     joint_stiffness = st.checkbox('Joint Stiffness')
@@ -85,7 +92,7 @@ def main():
     eye_problems = st.checkbox('Eye Problems')
 
     # Physical Examination Findings Section
-    st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
+    st.markdown('<div class="box-info"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
 
     # Expander for Physical Examination Findings
     joint_swelling = st.checkbox('Joint Swelling')
@@ -101,11 +108,11 @@ def main():
         other_finding_text = st.text_input('Specify Other Finding')
 
     # Diagnostic Tests Section
-    st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
+    st.markdown('<div class="box-info"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
     diagnostic_tests = st.text_area('Enter Diagnostic Tests')
 
     # Notes and Comments Section
-    st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
+    st.markdown('<div class="box-info"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
     notes_and_comments = st.text_area('Enter Notes and Comments')
 
     # Submit Button
@@ -116,3 +123,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
