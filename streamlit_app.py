@@ -87,12 +87,13 @@ def main():
 
     # Diagnostic Tests Section
     st.markdown('<h4>Diagnostic Tests</h4>', unsafe_allow_html=True)
-    Diagnostic_Tests = st.text_input(label='')
+    Diagnostic_Tests = st.text_input(label=' ')
+
 
 
     # Notes and Comments Section
     st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True)
-    Notes_and_Comments = st.text_input(label='')
+    Notes_and_Comments = st.text_input(label=' ')
 
     # Submit Button
     if st.button('Submit'):
