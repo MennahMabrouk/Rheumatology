@@ -187,12 +187,21 @@ def past_patient_reports_page():
 
     # Text input for searching patient by ID
     patient_id_input = st.text_input("Enter Patient ID:")
+    patient_name_input = st.text_input("Enter Patient Name:")
 
-    # Execute SQL query to fetch past patient records if patient ID is provided
-    if patient_id_input:
+    # Execute SQL query to fetch past patient records if patient ID or name is provided
+    if patient_id_input or patient_name_input:
         try:
-            patient_id = int(patient_id_input)
-            cursor.execute("""
+            if patient_id_input:
+                search_type = "ID"
+                search_value = int(patient_id_input)
+                condition = "Patient.patient_id = %s"
+            else:
+                search_type = "Name"
+                search_value = patient_name_input.strip()
+                condition = "Patient.name LIKE %s"
+
+            cursor.execute(f"""
                 SELECT 
                     Patient.patient_id,
                     Patient.name,
@@ -255,25 +264,21 @@ def past_patient_reports_page():
                 LEFT JOIN 
                     NotesAndComments ON Patient.patient_id = NotesAndComments.patient_id
                 WHERE 
-                    Patient.patient_id = %s
-            """, (patient_id,))
+                    {condition}
+            """, (search_value,))
             records = cursor.fetchall()
 
             # Display the records if found
             if records:
-                st.write("Patient Records for ID:", patient_id)
+                st.write(f"Patient Records for {search_type}: {search_value}")
                 for record in records:
                     st.write(record)
             else:
-                st.write("No patient records found for ID:", patient_id)
+                st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError:
             st.error("Please enter a valid patient ID.")
     else:
-        st.info("Enter a patient ID to search.")
-
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
+        st.info("Enter a patient ID 
 
 
 if __name__ == "__main__":
