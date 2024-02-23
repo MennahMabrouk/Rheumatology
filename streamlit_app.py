@@ -83,12 +83,10 @@ def main():
     fever = st.checkbox('Fever')
     skin_rashes = st.checkbox('Skin Rashes or Lesions')
     eye_problems = st.checkbox('Eye Problems')
-    
     # 'Other' checkbox and text input for other Systems Section
     other_system = st.checkbox('Other')
     if other_system:
-        other_system_text = st.text_input('Specify Other Systems Section')
-
+        other_system_text = st.text_input('Other Systems Section')
 
     # Physical Examination Findings Section
     st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
@@ -100,7 +98,6 @@ def main():
     joint_redness = st.checkbox('Joint Redness')
     limited_range_of_motion = st.checkbox('Limited Range of Motion')
     muscle_weakness = st.checkbox('Muscle Weakness')
-
     # 'Other' checkbox and text input for other findings
     other_finding = st.checkbox('Other')
     if other_finding:
