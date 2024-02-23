@@ -84,12 +84,13 @@ def main():
     skin_rashes = st.checkbox('Skin Rashes or Lesions')
     eye_problems = st.checkbox('Eye Problems')
 
-'''
+    '''
     # 'Other' checkbox and text input for other Systems Section
     other_system = st.checkbox('Other')
     if other_system:
         other_system_text = st.text_input('Other Systems Section')
-'''
+    '''
+    
     # Physical Examination Findings Section
     st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
 
