@@ -41,6 +41,15 @@ def main():
     # Inject custom CSS
     st.markdown(box_styles, unsafe_allow_html=True)
 
+    # Create a sidebar navigation menu
+    page = st.sidebar.selectbox("Navigation", ["New Patient", "Past Patient Reports"])
+
+    if page == "New Patient":
+        new_patient_page()
+    elif page == "Past Patient Reports":
+        past_patient_reports_page()
+
+def new_patient_page():
     # Connect to the MySQL database
     conn = connect_to_database()
     if conn is None:
@@ -159,6 +168,22 @@ def main():
             st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
             st.sidebar.write(f"Name: {name}")
             st.sidebar.write(f"Age: {age}")
+            st.sidebar.write(f"Gender: {gender}")
+        except mysql.connector.Error as e:
+            st.error(f"Error inserting data into MySQL database: {e}")
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+def past_patient_reports_page():
+    # Here you can fetch and display past patient reports from the database
+    st.title("Past Patient Reports")
+    # Add your code to fetch and display past patient reports here
+
+if __name__ == "__main__":
+    main()
+  st.sidebar.write(f"Age: {age}")
             st.sidebar.write(f"Gender: {gender}")
         except mysql.connector.Error as e:
             st.error(f"Error inserting data into MySQL database: {e}")
