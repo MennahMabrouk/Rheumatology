@@ -113,8 +113,8 @@ def main():
         st.write("- Checkboxes for Follow-up Instructions")
 
     # Notes and Comments Section
-    Notes_and_Comments = st.text_input('Notes and Comments')
-    st.write(st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True))
+    Notes_and_Comments = st.text_input(label=st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True))
+
 
     # Submit Button
     if st.button('Submit'):
