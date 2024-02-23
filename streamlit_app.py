@@ -143,6 +143,13 @@ def main():
     # Notes and Comments Section
     st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
     notes_and_comments = st.text_area('Enter Notes and Comments')
+    # Submit Button
+    if st.button('Submit'):
+        try:
+            # You can add code here to save the entered information or perform further actions
+            st.success('Patient information submitted successfully.')
+        except mysql.connector.Error as e:
+            st.error(f"Error inserting data into MySQL database: {e}")
 
     # Close the cursor and connection
     cursor.close()
