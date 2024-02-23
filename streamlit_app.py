@@ -287,6 +287,5 @@ def past_patient_reports_page():
     conn.close()
 
 
-
 if __name__ == "__main__":
     main()
