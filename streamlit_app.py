@@ -92,26 +92,6 @@ def main():
     with st.expander('Click to expand'):
         st.write("- Checkboxes for Diagnostic Tests")
 
-    # Assessment and Plan Section
-    st.header('Assessment and Plan')
-    with st.expander('Click to expand'):
-        st.write("- Checkboxes for Assessment and Plan")
-
-    # Patient Education and Counseling Section
-    st.header('Patient Education and Counseling')
-    with st.expander('Click to expand'):
-        st.write("- Checkboxes for Patient Education and Counseling")
-
-    # Documentation of Consent and Referrals Section
-    st.header('Documentation of Consent and Referrals')
-    with st.expander('Click to expand'):
-        st.write("- Checkboxes for Documentation of Consent and Referrals")
-
-    # Follow-up Instructions Section
-    st.header('Follow-up Instructions')
-    with st.expander('Click to expand'):
-        st.write("- Checkboxes for Follow-up Instructions")
-
     # Notes and Comments Section
     st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True)
     Notes_and_Comments = st.text_input(label='')
