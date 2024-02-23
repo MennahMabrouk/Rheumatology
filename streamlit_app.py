@@ -4,14 +4,14 @@ def main():
     st.title('Rheumatology Patient Checking Chart')
 
     # Patient Information Section
-    st.header('Patient Information')
+    st.markdown('<h4>Patient Information</h4>', unsafe_allow_html=True)
     name = st.text_input('Name')
     age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
     # Medical History Section
-    st.header('Medical History')
-    
+    st.markdown('<h4>Medical History</h4>', unsafe_allow_html=True)
+
     # Previous Diagnoses
     common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
     selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
@@ -37,8 +37,8 @@ def main():
         other_surgery = st.text_input('Other Surgery or Procedure')
 
     # Rheumatologic History Section
-    st.header('Rheumatologic History')
-    
+    st.markdown('<h4>Rheumatologic History</h4>', unsafe_allow_html=True)
+
     #Previous Rheumatologic Diagnoses
     common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout','Other']
     selected_rheumatologic_diagnoses = st.multiselect('Common Previous Rheumatologic Diagnoses', common_rheumatologic_diagnoses)
@@ -59,7 +59,8 @@ def main():
 
     
     # Review of Systems Section
-    st.header('Review of Systems')
+    st.markdown('<h4>Review of Systems</h4>', unsafe_allow_html=True)
+
     joint_pain = st.checkbox('Joint Pain')
     joint_stiffness = st.checkbox('Joint Stiffness')
     swelling = st.checkbox('Swelling')
@@ -69,7 +70,7 @@ def main():
     eye_problems = st.checkbox('Eye Problems')
         
     # Physical Examination Findings Section
-    st.header('Physical Examination Findings')
+    st.markdown('<h4>Physical Examination Findings</h4>', unsafe_allow_html=True)
 
     # Expander for Physical Examination Findings
     joint_swelling = st.checkbox('Joint Swelling')
@@ -86,13 +87,9 @@ def main():
 
 
     # Diagnostic Tests Section
-    st.markdown('<h4>Diagnostic Tests</h4>', unsafe_allow_html=True)
     Diagnostic_Tests = st.text_input(label='Diagnostic Tests')
-
-
-
+    
     # Notes and Comments Section
-    st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True)
     Notes_and_Comments = st.text_input('Notes and Comments')
 
     # Submit Button
