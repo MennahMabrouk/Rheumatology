@@ -38,7 +38,13 @@ def main():
 
     # Rheumatologic History Section
     st.header('Rheumatologic History')
-    previous_rheumatologic_diagnoses = st.text_area('Previous Rheumatologic Diagnoses')
+    
+    #Previous Rheumatologic Diagnoses
+    common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout','Other']
+    selected_rheumatologic_diagnoses = st.multiselect('Common Previous Rheumatologic Diagnoses', common_rheumatologic_diagnoses)
+    if 'Other' in selected_rheumatologic_diagnoses:
+        other_rheumatologic_diagnosis = st.text_input('Other Diagnosis')
+
     disease_activity = st.text_area('Disease Activity')
     response_to_treatments = st.text_area('Response to Previous Treatments')
     # Family History Section
