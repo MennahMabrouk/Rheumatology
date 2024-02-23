@@ -1,3 +1,5 @@
+
+
 import streamlit as st
 
 # Custom CSS for styling boxes with colors
@@ -121,4 +123,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
