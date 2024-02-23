@@ -277,15 +277,16 @@ def past_patient_reports_page():
                     st.write(filtered_record)
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
-        except ValueError:
-            st.error("Please enter a valid patient ID.")
+        except ValueError as ve:
+            st.error(f"Error: {ve}")
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
     else:
         st.info("Enter a patient ID or name to search.")
 
     # Close the cursor and connection
     cursor.close()
     conn.close()
-
 
 if __name__ == "__main__":
     main()
