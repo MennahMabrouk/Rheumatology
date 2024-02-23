@@ -4,16 +4,15 @@ def main():
     st.title('Rheumatology Patient Checking Chart')
 
     # Patient Information Section
-    with st.beta_container():
-        st.markdown('<h4>Patient Information</h4>', unsafe_allow_html=True)
+    st.sidebar.markdown('<h4>Patient Information</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         name = st.text_input('Name')
         age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
         gender = st.selectbox('Gender', ['Male', 'Female'])
 
     # Medical History Section
-    with st.beta_container():
-        st.markdown('<h4>Medical History</h4>', unsafe_allow_html=True)
-
+    st.sidebar.markdown('<h4>Medical History</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         # Previous Diagnoses
         common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
@@ -39,9 +38,8 @@ def main():
             other_surgery = st.text_input('Other Surgery or Procedure')
 
     # Rheumatologic History Section
-    with st.beta_container():
-        st.markdown('<h4>Rheumatologic History</h4>', unsafe_allow_html=True)
-
+    st.sidebar.markdown('<h4>Rheumatologic History</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         # Previous Rheumatologic Diagnoses
         common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout','Other']
         selected_rheumatologic_diagnoses = st.multiselect('Common Previous Rheumatologic Diagnoses', common_rheumatologic_diagnoses)
@@ -55,18 +53,16 @@ def main():
             other_activities = st.text_input('Common Disease Activities')
 
     # Family History Section
-    with st.beta_container():
-        st.markdown('<h4>Family History</h4>', unsafe_allow_html=True)
-
+    st.sidebar.markdown('<h4>Family History</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
         if 'Other' in selected_family_history:
             other_family_history = st.text_input('Other Family History')
 
     # Review of Systems Section
-    with st.beta_container():
-        st.markdown('<h4>Review of Systems</h4>', unsafe_allow_html=True)
-
+    st.sidebar.markdown('<h4>Review of Systems</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         joint_pain = st.checkbox('Joint Pain')
         joint_stiffness = st.checkbox('Joint Stiffness')
         swelling = st.checkbox('Swelling')
@@ -76,9 +72,8 @@ def main():
         eye_problems = st.checkbox('Eye Problems')
         
     # Physical Examination Findings Section
-    with st.beta_container():
-        st.markdown('<h4>Physical Examination Findings</h4>', unsafe_allow_html=True)
-
+    st.sidebar.markdown('<h4>Physical Examination Findings</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         # Expander for Physical Examination Findings
         joint_swelling = st.checkbox('Joint Swelling')
         joint_tenderness = st.checkbox('Joint Tenderness')
@@ -93,17 +88,18 @@ def main():
             other_finding_text = st.text_input('Specify Other Finding')
 
     # Diagnostic Tests Section
-    with st.beta_container():
-        st.markdown('<h4>Diagnostic Tests</h4>', unsafe_allow_html=True)
+    st.sidebar.markdown('<h4>Diagnostic Tests</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         diagnostic_tests = st.text_area('Enter Diagnostic Tests')
 
     # Notes and Comments Section
-    with st.beta_container():
-        st.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True)
+    st.sidebar.markdown('<h4>Notes and Comments</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         notes_and_comments = st.text_area('Enter Notes and Comments')
 
     # Submit Button
-    with st.beta_container():
+    st.sidebar.markdown('<h4>Submit</h4>', unsafe_allow_html=True)
+    with st.sidebar:
         if st.button('Submit'):
             # You can add code here to save the entered information or perform further actions
             st.success('Patient information submitted successfully.')
