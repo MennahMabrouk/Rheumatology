@@ -183,14 +183,3 @@ def past_patient_reports_page():
 
 if __name__ == "__main__":
     main()
-  st.sidebar.write(f"Age: {age}")
-            st.sidebar.write(f"Gender: {gender}")
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting data into MySQL database: {e}")
-
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
-
-if __name__ == "__main__":
-    main()
