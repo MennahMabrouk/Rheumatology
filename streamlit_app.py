@@ -67,48 +67,59 @@ def new_patient_page():
     # Medical History Section
     st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
+    # Define common options
+    common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+    common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants', 'Other']
+    common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications', 'Other']
+    common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery', 'Other']
+    common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
+    common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
+    common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+
     # Previous Diagnoses
     selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
     for diagnosis in selected_diagnoses:
         cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
     conn.commit()
-    
+
     # Current Medications
     selected_medications = st.multiselect('Common Current Medications', common_medications)
     for medication in selected_medications:
         cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (medication,))
     conn.commit()
-    
+
     # Allergies Section
     selected_allergies = st.multiselect('Common Allergies', common_allergies)
     for allergy in selected_allergies:
         cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (allergy,))
     conn.commit()
-    
+
     # Surgeries Section
     selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
     for surgery in selected_surgeries:
         cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
     conn.commit()
-    
+
+    # Rheumatologic History and Family History Section
+    st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
+
     # Previous Rheumatologic Diagnoses
     selected_rheumatologic_diagnoses = st.multiselect('Common Previous Rheumatologic Diagnoses', common_rheumatologic_diagnoses)
     for rheumatologic_diagnosis in selected_rheumatologic_diagnoses:
         cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (rheumatologic_diagnosis,))
     conn.commit()
-    
+
     # Common Disease Activities
     selected_activity = st.multiselect('Select Disease Activity', common_activities)
     for activity in selected_activity:
         cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (activity,))
     conn.commit()
-    
+
     # Family History
     selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
     for family_history in selected_family_history:
         cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (family_history,))
     conn.commit()
-
 
     # Review of Systems Section
     st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
@@ -159,6 +170,7 @@ def new_patient_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
+
 
 def past_patient_reports_page():
     # Connect to the MySQL database
