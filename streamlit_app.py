@@ -49,6 +49,29 @@ def main():
     elif page == "Past Patient Reports":
         past_patient_reports_page()
 
+# Define surgeries_section function outside of new_patient_page function
+def surgeries_section(common_surgeries, patient_id):
+    selected_surgeries_widget = st.multiselect('Common Surgeries or Procedures', common_surgeries)
+    for surgery in selected_surgeries_widget:
+        if surgery == 'Other':
+            other_surgery_name = st.text_input('Enter Other Surgery')
+            if other_surgery_name:
+                # Insert 'Other' surgery into the Surgery table if it doesn't exist
+                cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
+                # Retrieve the last auto-generated surgery_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                surgery_id = cursor.fetchone()[0]
+                # Insert into PatientSurgery with valid surgery_id
+                cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+        else:
+            # Insert selected surgery into the Surgery table if it doesn't exist
+            cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
+            # Retrieve the last auto-generated surgery_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            surgery_id = cursor.fetchone()[0]
+            # Insert into PatientSurgery with valid surgery_id
+            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+
 def new_patient_page():
     # Connect to the MySQL database
     conn = connect_to_database()
@@ -149,34 +172,9 @@ def new_patient_page():
                 # Insert into PatientAllergy with valid allergy_id
                 cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
 
-            
-            def surgeries_section(common_surgeries, patient_id):
-                selected_surgeries_widget = st.multiselect('Common Surgeries or Procedures', common_surgeries)
-                for surgery in selected_surgeries_widget:
-                    if surgery == 'Other':
-                        other_surgery_name = st.text_input('Enter Other Surgery')
-                        if other_surgery_name:
-                            # Insert 'Other' surgery into the Surgery table if it doesn't exist
-                            cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
-                            # Retrieve the last auto-generated surgery_id
-                            cursor.execute("SELECT LAST_INSERT_ID()")
-                            surgery_id = cursor.fetchone()[0]
-                            # Insert into PatientSurgery with valid surgery_id
-                            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
-                    else:
-                        # Insert selected surgery into the Surgery table if it doesn't exist
-                        cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
-                        # Retrieve the last auto-generated surgery_id
-                        cursor.execute("SELECT LAST_INSERT_ID()")
-                        surgery_id = cursor.fetchone()[0]
-                        # Insert into PatientSurgery with valid surgery_id
-                        cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
-            
-            # Surgeries Section
-            surgeries_section(common_surgeries, patient_id)
-            
+        # Surgeries Section
+        surgeries_section(common_surgeries, patient_id)
 
-        
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
         
@@ -258,6 +256,7 @@ def new_patient_page():
         # Close the cursor and connection
         cursor.close()
         conn.close()
+
 
 def past_patient_reports_page():
     # Connect to the MySQL database
