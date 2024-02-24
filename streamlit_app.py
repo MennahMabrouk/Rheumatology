@@ -161,7 +161,7 @@ def new_patient_page():
             print("Family history inserted successfully:", history)  # Add this line
 
     # Review of Systems Section
-    st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
+    #st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
     
     joint_pain = st.checkbox('Joint Pain')
     joint_stiffness = st.checkbox('Joint Stiffness')
