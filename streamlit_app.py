@@ -87,8 +87,19 @@ def new_patient_page():
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
-            cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, (SELECT diagnosis_id FROM Diagnosis WHERE name = %s LIMIT 1))", (patient_id, diagnosis))
-        
+            try:
+                # Retrieve diagnosis_id from the Diagnosis table based on diagnosis name
+                cursor.execute("SELECT diagnosis_id FROM Diagnosis WHERE name = %s", (diagnosis,))
+                result = cursor.fetchone()
+                if result:
+                    diagnosis_id = result[0]
+                    # Insert into PatientMedicalHistory with valid diagnosis_id
+                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+                else:
+                    st.error(f"No diagnosis found with the name {diagnosis}")
+            except mysql.connector.Error as e:
+                st.error(f"Error inserting diagnosis {diagnosis}: {e}")
+
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
         for medication in selected_medications:
