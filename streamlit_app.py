@@ -86,8 +86,25 @@ def new_patient_page():
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
-            cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, (SELECT diagnosis_id FROM Diagnosis WHERE name = %s LIMIT 1))", (patient_id, diagnosis))
-        
+            if diagnosis == 'Other':
+                other_diagnosis_name = st.text_input('Enter Other Diagnosis')
+                if other_diagnosis_name:
+                    # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
+                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
+                    # Retrieve the last auto-generated diagnosis_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    diagnosis_id = cursor.fetchone()[0]
+                    # Insert into PatientMedicalHistory with valid diagnosis_id
+                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+            else:
+                # Insert selected diagnosis into the Diagnosis table if it doesn't exist
+                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
+                # Retrieve the last auto-generated diagnosis_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                diagnosis_id = cursor.fetchone()[0]
+                # Insert into PatientMedicalHistory with valid diagnosis_id
+                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
         for medication in selected_medications:
