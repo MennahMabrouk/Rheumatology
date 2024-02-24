@@ -156,7 +156,7 @@ def new_patient_page():
                     other_surgery_name = st.text_input('Enter Other Surgery')
                     if other_surgery_name:
                         # Insert 'Other' surgery into the Surgery table if it doesn't exist
-                        cursor.execute("INSERT INTO Surgery (name) VALUES (%s) ON DUPLICATE KEY UPDATE surgery_id=LAST_INSERT_ID(surgery_id)", (other_surgery_name,))
+                        cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
                         # Retrieve the last auto-generated surgery_id
                         cursor.execute("SELECT LAST_INSERT_ID()")
                         surgery_id = cursor.fetchone()[0]
@@ -164,7 +164,7 @@ def new_patient_page():
                         cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
                 else:
                     # Insert selected surgery into the Surgery table if it doesn't exist
-                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s) ON DUPLICATE KEY UPDATE surgery_id=LAST_INSERT_ID(surgery_id)", (surgery,))
+                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
                     # Retrieve the last auto-generated surgery_id
                     cursor.execute("SELECT LAST_INSERT_ID()")
                     surgery_id = cursor.fetchone()[0]
