@@ -88,17 +88,22 @@ def new_patient_page():
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
             try:
-                # Retrieve diagnosis_id from the Diagnosis table based on diagnosis name
+                # Check if the diagnosis already exists in the Diagnosis table
                 cursor.execute("SELECT diagnosis_id FROM Diagnosis WHERE name = %s", (diagnosis,))
                 result = cursor.fetchone()
                 if result:
                     diagnosis_id = result[0]
-                    # Insert into PatientMedicalHistory with valid diagnosis_id
-                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
                 else:
-                    st.error(f"No diagnosis found with the name {diagnosis}")
+                    # If the diagnosis does not exist, insert it into the Diagnosis table
+                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
+                    # Retrieve the auto-generated diagnosis_id
+                    diagnosis_id = cursor.lastrowid
+                
+                # Insert into PatientMedicalHistory with valid diagnosis_id
+                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
             except mysql.connector.Error as e:
                 st.error(f"Error inserting diagnosis {diagnosis}: {e}")
+
 
 
         # Current Medications
