@@ -90,11 +90,26 @@ def new_patient_page():
         
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
-        if selected_medications:
-            for medication in selected_medications:
-                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s LIMIT 1))", (patient_id, medication))
-        else:
-            st.warning("Please select at least one medication.")
+        for medication in selected_medications:
+            if medication == 'Other':
+                other_medication_name = st.text_input('Enter Other Medication')
+                if other_medication_name:
+                    # Insert 'Other' medication into the Medication table if it doesn't exist
+                    cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
+                    # Retrieve the last auto-generated medication_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    medication_id = cursor.fetchone()[0]
+                    # Insert into PatientCurrentMedication with valid medication_id
+                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+            else:
+                # Insert selected medication into the Medication table if it doesn't exist
+                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+                # Retrieve the last auto-generated medication_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                medication_id = cursor.fetchone()[0]
+                # Insert into PatientCurrentMedication with valid medication_id
+                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+
 
         # Allergies Section
         selected_allergies = st.multiselect('Common Allergies', common_allergies)
