@@ -90,20 +90,20 @@ def new_patient_page():
             try:
                 # Check if the diagnosis already exists in the Diagnosis table
                 cursor.execute("SELECT diagnosis_id FROM Diagnosis WHERE name = %s", (diagnosis,))
-                result = cursor.fetchone()
+                result = cursor.fetchone()  # Fetch the result
                 if result:
                     diagnosis_id = result[0]
                 else:
                     # If the diagnosis does not exist, insert it into the Diagnosis table
                     cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
                     # Retrieve the auto-generated diagnosis_id
-                    diagnosis_id = cursor.lastrowid
+                    cursor.execute("SELECT LAST_INSERT_ID()")  # Fetch the result
+                    diagnosis_id = cursor.fetchone()[0]  # Fetch the result value from the tuple
                 
                 # Insert into PatientMedicalHistory with valid diagnosis_id
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
             except mysql.connector.Error as e:
                 st.error(f"Error inserting diagnosis {diagnosis}: {e}")
-
 
 
         # Current Medications
