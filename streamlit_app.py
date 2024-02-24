@@ -310,9 +310,14 @@ if st.button('Submit'):
         cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
         conn.commit()
         print("Notes and Comments data inserted successfully")  # Add this line
-
-    except mysql.connector.Error as e:
-        st.error(f"Error inserting data into MySQL database: {e}")
+        # Insert Review of Systems data into the database
+        try:
+            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+            conn.commit()
+            print("Review of Systems data inserted successfully")  # Add this line
+        except mysql.connector.Error as e:
+            st.error(f"Error inserting Review of Systems data into database: {e}")
+            print("Error inserting Review of Systems data:", e)  # Add this line
 
 
 def past_patient_reports_page():
