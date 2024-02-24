@@ -282,17 +282,20 @@ def past_patient_reports_page():
             """, (search_value,))
             records = cursor.fetchall()
 
-            # Display the records if found
-            if records:
-                st.write(f"Patient Records for {search_type}: {search_value}")
-                for record in records:
-                    # Filter out None values
-                    filtered_record = {key: record[i] for i, key in enumerate(cursor.column_names) if record[i] is not None}
-                    # Format the record as a string with HTML line breaks
-                    formatted_output = "<br>".join([f"{key}: {value}" for key, value in filtered_record.items()])
-                    # Display the formatted output within the colored box
-                    st.markdown(f'<div class="box">{formatted_output}</div>', unsafe_allow_html=True)
-                     
+            for record in records:
+                # Filter out None values
+                filtered_record = {key: record[i] for i, key in enumerate(cursor.column_names) if record[i] is not None}
+                # Modify fever display
+                if 'fever' in filtered_record:
+                    if filtered_record['fever'] == 1:
+                        filtered_record['fever'] = 'had fever: yes'
+                    else:
+                        del filtered_record['fever']
+                # Format the record as a string with HTML line breaks
+                formatted_output = "<br>".join([f"{key}: {value}" for key, value in filtered_record.items()])
+                # Display the formatted output within the colored box
+                st.markdown(f'<div class="box">{formatted_output}</div>', unsafe_allow_html=True)
+
                 
 
             else:
