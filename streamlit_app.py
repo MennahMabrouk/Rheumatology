@@ -1,3 +1,4 @@
+
 import streamlit as st
 import mysql.connector
 
@@ -285,18 +286,19 @@ def past_patient_reports_page():
             for record in records:
                 # Filter out None values
                 filtered_record = {key: record[i] for i, key in enumerate(cursor.column_names) if record[i] is not None}
-                # Modify fever display
+                # Modify display for fever
                 if 'fever' in filtered_record:
                     if filtered_record['fever'] == 1:
                         filtered_record['fever'] = 'had fever: yes'
                     else:
                         del filtered_record['fever']
+                # Filter out attributes with zero values (except fever)
+                filtered_record = {key: value for key, value in filtered_record.items() if key != 'fever' and value != 0}
                 # Format the record as a string with HTML line breaks
                 formatted_output = "<br>".join([f"{key}: {value}" for key, value in filtered_record.items()])
                 # Display the formatted output within the colored box
                 st.markdown(f'<div class="box">{formatted_output}</div>', unsafe_allow_html=True)
 
-                
 
             else:
                 st.write(f"No patient records found for {search_type}: {search_value}")
