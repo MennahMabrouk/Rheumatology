@@ -127,12 +127,28 @@ def new_patient_page():
                 # Insert into PatientCurrentMedication with valid medication_id
                 cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
 
-
         # Allergies Section
         selected_allergies = st.multiselect('Common Allergies', common_allergies)
         for allergy in selected_allergies:
-            cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, (SELECT allergy_id FROM Allergy WHERE name = %s LIMIT 1))", (patient_id, allergy))
-        
+            if allergy == 'Other':
+                other_allergy_name = st.text_input('Enter Other Allergy')
+                if other_allergy_name:
+                    # Insert 'Other' allergy into the Allergy table if it doesn't exist
+                    cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (other_allergy_name,))
+                    # Retrieve the last auto-generated allergy_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    allergy_id = cursor.fetchone()[0]
+                    # Insert into PatientAllergy with valid allergy_id
+                    cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+            else:
+                # Insert selected allergy into the Allergy table if it doesn't exist
+                cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (allergy,))
+                # Retrieve the last auto-generated allergy_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                allergy_id = cursor.fetchone()[0]
+                # Insert into PatientAllergy with valid allergy_id
+                cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+
         # Surgeries Section
         selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
         for surgery in selected_surgeries:
