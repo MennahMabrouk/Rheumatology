@@ -93,15 +93,16 @@ def new_patient_page():
         selected_medications = st.multiselect('Common Current Medications', common_medications)
         if selected_medications:
             for medication in selected_medications:
-                # Retrieve medication_id from the Medication table based on medication name
-                cursor.execute("SELECT medication_id FROM Medication WHERE name = %s", (medication,))
-                result = cursor.fetchone()
-                if result:
-                    medication_id = result[0]
+                try:
+                    # Insert medication into the Medication table if it doesn't exist
+                    cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+                    # Retrieve the last auto-generated medication_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    medication_id = cursor.fetchone()[0]
                     # Insert into PatientCurrentMedication with valid medication_id
                     cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
-                else:
-                    st.error(f"No medication found with the name {medication}")
+                except mysql.connector.Error as e:
+                    st.error(f"Error inserting medication {medication}: {e}")
         else:
             st.warning("Please select at least one medication.")
 
