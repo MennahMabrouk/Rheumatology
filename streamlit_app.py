@@ -150,8 +150,8 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
 
             # Surgeries Section
-            selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
-            for surgery in selected_surgeries:
+            selected_surgeries_widget = st.multiselect('Common Surgeries or Procedures', common_surgeries)
+            for surgery in selected_surgeries_widget:
                 if surgery == 'Other':
                     other_surgery_name = st.text_input('Enter Other Surgery')
                     if other_surgery_name:
