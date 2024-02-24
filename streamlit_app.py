@@ -315,7 +315,6 @@ if st.button('Submit'):
         st.error(f"Error inserting data into MySQL database: {e}")
 
 
-
 def past_patient_reports_page():
     # Connect to the MySQL database
     conn = connect_to_database()
