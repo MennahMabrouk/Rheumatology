@@ -139,6 +139,7 @@ def new_patient_page():
         muscle_weakness = st.checkbox('Muscle Weakness')
         # 'Other' checkbox and text input for other findings
         other_finding = st.checkbox('Other')
+        other_finding_text = ""  # Initialize other_finding_text variable
         if other_finding:
             other_finding_text = st.text_input('Specify Other Finding')
 
