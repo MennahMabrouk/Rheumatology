@@ -86,36 +86,36 @@ def new_patient_page():
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
-            cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, (SELECT diagnosis_id FROM Diagnosis WHERE name = %s))", (patient_id, diagnosis))
+            cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, (SELECT diagnosis_id FROM Diagnosis WHERE name = %s LIMIT 1))", (patient_id, diagnosis))
         
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
         for medication in selected_medications:
-            cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s))", (patient_id, medication))
+            cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s LIMIT 1))", (patient_id, medication))
         
         # Allergies Section
         selected_allergies = st.multiselect('Common Allergies', common_allergies)
         for allergy in selected_allergies:
-            cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, (SELECT allergy_id FROM Allergy WHERE name = %s))", (patient_id, allergy))
+            cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, (SELECT allergy_id FROM Allergy WHERE name = %s LIMIT 1))", (patient_id, allergy))
         
         # Surgeries Section
         selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
         for surgery in selected_surgeries:
-            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, (SELECT surgery_id FROM Surgery WHERE name = %s))", (patient_id, surgery))
+            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, (SELECT surgery_id FROM Surgery WHERE name = %s LIMIT 1))", (patient_id, surgery))
         
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
-
+        
         # Common Disease Activities
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
         for activity in selected_activity:
-            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s))", (patient_id, activity))
+            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
         
         # Family History
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
         for family_history in selected_family_history:
-            cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, (SELECT history_id FROM FamilyHistory WHERE name = %s))", (patient_id, family_history))
-        
+            cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, (SELECT history_id FROM FamilyHistory WHERE name = %s LIMIT 1))", (patient_id, family_history))
+
         # Review of Systems Section
         st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
 
