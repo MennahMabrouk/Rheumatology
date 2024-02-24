@@ -86,7 +86,7 @@ def new_patient_page():
         common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
 
-        # Previous Diagnoses
+      # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
             try:
@@ -99,15 +99,14 @@ def new_patient_page():
                     # If the diagnosis does not exist, insert it into the Diagnosis table
                     cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
                     # Retrieve the auto-generated diagnosis_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")  # Fetch the result
-                    diagnosis_id = cursor.fetchone()[0]  # Fetch the result value from the tuple
-                
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    diagnosis_id = cursor.fetchone()[0]
+
                 # Insert into PatientMedicalHistory with valid diagnosis_id
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-                # Commit the changes
-                conn.commit()
             except mysql.connector.Error as e:
                 st.error(f"Error inserting diagnosis {diagnosis}: {e}")
+
 
 
 
