@@ -56,6 +56,13 @@ def new_patient_page():
         return
 
     # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+    # Connect to the MySQL database
+    conn = connect_to_database()
+    if conn is None:
+        return
+
+    # Create a cursor object to execute SQL queries
     cursor = conn.cursor(multi=True)
 
     # Patient Information Section
