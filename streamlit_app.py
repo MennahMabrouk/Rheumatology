@@ -159,9 +159,8 @@ def new_patient_page():
             cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (history,))
             conn.commit()
             print("Family history inserted successfully:", history)  # Add this line
-
+'''
     # Review of Systems Section
-        
     st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
     joint_pain = st.checkbox('Joint Pain')
     joint_stiffness = st.checkbox('Joint Stiffness')
@@ -179,6 +178,7 @@ def new_patient_page():
     except mysql.connector.Error as e:
         st.error(f"Error inserting Review of Systems data into database: {e}")
         print("Error inserting Review of Systems data:", e)  # Add this line
+'''
 
     # Physical Examination Findings Section
     st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
