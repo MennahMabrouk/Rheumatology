@@ -1,6 +1,3 @@
-
-
-
 import streamlit as st
 import mysql.connector
 
@@ -86,51 +83,18 @@ def new_patient_page():
         common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
 
-      # Previous Diagnoses
+        # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
-            try:
-                # Check if the diagnosis already exists in the Diagnosis table
-                cursor.execute("SELECT diagnosis_id FROM Diagnosis WHERE name = %s", (diagnosis,))
-                result = cursor.fetchone()  # Fetch the result
-                if result:
-                    diagnosis_id = result[0]
-                else:
-                    # If the diagnosis does not exist, insert it into the Diagnosis table
-                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
-                    # Retrieve the auto-generated diagnosis_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    diagnosis_id = cursor.fetchone()[0]
-
-                # Insert into PatientMedicalHistory with valid diagnosis_id
-                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-            except mysql.connector.Error as e:
-                st.error(f"Error inserting diagnosis {diagnosis}: {e}")
-
-
-
-
+            cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, (SELECT diagnosis_id FROM Diagnosis WHERE name = %s LIMIT 1))", (patient_id, diagnosis))
+        
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
-        for medication in selected_medications:
-            if medication == 'Other':
-                other_medication_name = st.text_input('Enter Other Medication')
-                if other_medication_name:
-                    # Insert 'Other' medication into the Medication table if it doesn't exist
-                    cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
-                    # Retrieve the last auto-generated medication_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    medication_id = cursor.fetchone()[0]
-                    # Insert into PatientCurrentMedication with valid medication_id
-                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
-            else:
-                # Insert selected medication into the Medication table if it doesn't exist
-                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
-                # Retrieve the last auto-generated medication_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                medication_id = cursor.fetchone()[0]
-                # Insert into PatientCurrentMedication with valid medication_id
-                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+        if selected_medications:
+            for medication in selected_medications:
+                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s LIMIT 1))", (patient_id, medication))
+        else:
+            st.warning("Please select at least one medication.")
 
         # Allergies Section
         selected_allergies = st.multiselect('Common Allergies', common_allergies)
@@ -223,8 +187,6 @@ def new_patient_page():
         # Close the cursor and connection
         cursor.close()
         conn.close()
-
-
 
 def past_patient_reports_page():
     # Connect to the MySQL database
