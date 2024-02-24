@@ -83,7 +83,7 @@ def new_patient_page():
         common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
         common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
-
+        
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
@@ -102,12 +102,12 @@ def new_patient_page():
                 
                 # Insert into PatientMedicalHistory with valid diagnosis_id
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-                # Commit the changes
-                conn.commit()
+                
+                # Consume any pending results
+                cursor.fetchall()
             except mysql.connector.Error as e:
                 st.error(f"Error inserting diagnosis {diagnosis}: {e}")
-
-
+        
 
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
