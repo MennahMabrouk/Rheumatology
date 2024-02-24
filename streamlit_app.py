@@ -293,9 +293,9 @@ def past_patient_reports_page():
                     else:
                         del filtered_record['fever']
                 # Filter out attributes with zero values (except fever)
-                filtered_record = {key: key.replace('_', ' ') for key, value in filtered_record.items() if key != 'fever' and value != 0}
+                filtered_record = {key: value for key, value in filtered_record.items() if key != 'fever' and value != 0}
                 # Format the record as a string with HTML line breaks
-                formatted_output = "<br>".join(filtered_record.values())
+                formatted_output = "<br>".join([f"{key}: {value}" for key, value in filtered_record.items()])
                 # Display the formatted output within the colored box
                 st.markdown(f'<div class="box">{formatted_output}</div>', unsafe_allow_html=True)
 
