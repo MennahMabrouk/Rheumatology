@@ -102,8 +102,11 @@ def new_patient_page():
                 
                 # Insert into PatientMedicalHistory with valid diagnosis_id
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+                # Commit the changes
+                conn.commit()
             except mysql.connector.Error as e:
                 st.error(f"Error inserting diagnosis {diagnosis}: {e}")
+
 
 
         # Current Medications
