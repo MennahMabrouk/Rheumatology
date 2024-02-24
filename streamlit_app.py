@@ -161,7 +161,7 @@ def new_patient_page():
             print("Family history inserted successfully:", history)  # Add this line
 
     # Review of Systems Section
-    
+        
     st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
     joint_pain = st.checkbox('Joint Pain')
     joint_stiffness = st.checkbox('Joint Stiffness')
@@ -171,14 +171,14 @@ def new_patient_page():
     skin_rashes = st.checkbox('Skin Rashes or Lesions')
     eye_problems = st.checkbox('Eye Problems')
     
-        try:
-            # Insert Review of Systems data into the database
-            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
-            conn.commit()
-            print("Review of Systems data inserted successfully")  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting Review of Systems data into database: {e}")
-            print("Error inserting Review of Systems data:", e)  # Add this line
+    try:
+        # Insert Review of Systems data into the database
+        cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+        conn.commit()
+        print("Review of Systems data inserted successfully")  # Add this line
+    except mysql.connector.Error as e:
+        st.error(f"Error inserting Review of Systems data into database: {e}")
+        print("Error inserting Review of Systems data:", e)  # Add this line
 
     # Physical Examination Findings Section
     st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
