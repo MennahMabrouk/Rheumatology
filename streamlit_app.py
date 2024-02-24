@@ -93,7 +93,15 @@ def new_patient_page():
         selected_medications = st.multiselect('Common Current Medications', common_medications)
         if selected_medications:
             for medication in selected_medications:
-                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s LIMIT 1))", (patient_id, medication))
+                # Retrieve medication_id from the Medication table based on medication name
+                cursor.execute("SELECT medication_id FROM Medication WHERE name = %s", (medication,))
+                result = cursor.fetchone()
+                if result:
+                    medication_id = result[0]
+                    # Insert into PatientCurrentMedication with valid medication_id
+                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+                else:
+                    st.error(f"No medication found with the name {medication}")
         else:
             st.warning("Please select at least one medication.")
 
