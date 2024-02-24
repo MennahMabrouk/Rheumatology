@@ -172,9 +172,6 @@ def new_patient_page():
     conn.close()
 
 
-if __name__ == "__main__":
-    main()
-
 
 def past_patient_reports_page():
     # Connect to the MySQL database
