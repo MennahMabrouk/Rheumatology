@@ -1,6 +1,26 @@
-
 import streamlit as st
 import mysql.connector
+
+# Custom CSS for styling boxes with colors
+box_styles = """
+    <style>
+        .box {
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: #9370DB; /* Purple */
+            margin-bottom: 20px;
+        }
+        .left-box {
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background-color: #FFD700; /* Gold */
+            margin-bottom: 20px;
+        }
+    </style>
+"""
+
 # Establish a connection to the MySQL database
 def connect_to_database():
     try:
@@ -211,9 +231,6 @@ def past_patient_reports_page():
                 # Display the formatted output within the colored box
                 st.markdown(f'<div class="box">{formatted_output}</div>', unsafe_allow_html=True)
 
-
-            else:
-                st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError as ve:
             st.error(f"Error: {ve}")
         except Exception as e:
