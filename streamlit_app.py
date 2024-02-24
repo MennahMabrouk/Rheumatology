@@ -58,13 +58,19 @@ def new_patient_page():
     # Create a cursor object to execute SQL queries
     cursor = conn.cursor()
 
-    try:
-        # Patient Information Section
-        st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-        name = st.text_input('Name')
-        age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
-        gender = st.selectbox('Gender', ['Male', 'Female'])
+    # Patient Information Section
+    st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+    name = st.text_input('Name')
+    age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
+    gender = st.selectbox('Gender', ['Male', 'Female'])
 
+    try:
+        # Insert patient information into the Patient table
+        cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
+        conn.commit()
+        # Get the auto-generated patient_id
+        patient_id = cursor.lastrowid
+        
         # Medical History Section
         st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
@@ -80,42 +86,36 @@ def new_patient_page():
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
-            cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
-        conn.commit()
-
+            cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, (SELECT diagnosis_id FROM Diagnosis WHERE name = %s))", (patient_id, diagnosis))
+        
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
         for medication in selected_medications:
-            cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (medication,))
-        conn.commit()
-
+            cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s))", (patient_id, medication))
+        
         # Allergies Section
         selected_allergies = st.multiselect('Common Allergies', common_allergies)
         for allergy in selected_allergies:
-            cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (allergy,))
-        conn.commit()
-
+            cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, (SELECT allergy_id FROM Allergy WHERE name = %s))", (patient_id, allergy))
+        
         # Surgeries Section
         selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
         for surgery in selected_surgeries:
-            cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
-        conn.commit()
-
+            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, (SELECT surgery_id FROM Surgery WHERE name = %s))", (patient_id, surgery))
+        
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
 
         # Common Disease Activities
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
         for activity in selected_activity:
-            cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (activity,))
-        conn.commit()
-
+            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s))", (patient_id, activity))
+        
         # Family History
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
         for family_history in selected_family_history:
-            cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (family_history,))
-        conn.commit()
-
+            cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, (SELECT history_id FROM FamilyHistory WHERE name = %s))", (patient_id, family_history))
+        
         # Review of Systems Section
         st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
 
@@ -149,23 +149,38 @@ def new_patient_page():
         # Notes and Comments Section
         st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
         notes_and_comments = st.text_area('Enter Notes and Comments')
-        # Submit Button
-        if st.button('Submit'):
-            # You can add code here to save the entered information or perform further actions
-            st.success('Patient information submitted successfully.')
-            # Display patient information in a box on the left side
-            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-            st.sidebar.write(f"Name: {name}")
-            st.sidebar.write(f"Age: {age}")
-            st.sidebar.write(f"Gender: {gender}")
+
+        # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
+        cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                       (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+        
+        cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                       (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
+        
+        cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
+        
+        cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
+
+        # Commit the transaction
+        conn.commit()
+
+        # Display success message
+        st.success('Patient information submitted successfully.')
+        
+        # Display patient information in a box on the left side
+        st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+        st.sidebar.write(f"Name: {name}")
+        st.sidebar.write(f"Age: {age}")
+        st.sidebar.write(f"Gender: {gender}")
 
     except mysql.connector.Error as e:
+        # Display error message if an error occurs during data insertion
         st.error(f"Error inserting data into MySQL database: {e}")
 
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
-
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
 
 
 def past_patient_reports_page():
