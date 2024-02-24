@@ -103,12 +103,6 @@ def new_patient_page():
     # Rheumatologic History and Family History Section
     st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
 
-    # Previous Rheumatologic Diagnoses
-    selected_rheumatologic_diagnoses = st.multiselect('Common Previous Rheumatologic Diagnoses', common_rheumatologic_diagnoses)
-    for rheumatologic_diagnosis in selected_rheumatologic_diagnoses:
-        cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (rheumatologic_diagnosis,))
-    conn.commit()
-
     # Common Disease Activities
     selected_activity = st.multiselect('Select Disease Activity', common_activities)
     for activity in selected_activity:
@@ -155,41 +149,10 @@ def new_patient_page():
     st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
     notes_and_comments = st.text_area('Enter Notes and Comments')
     # Submit Button
-
-    # Insert Patient Information
     if st.button('Submit'):
         try:
-            # Insert Patient Information
-            cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-            conn.commit()
-
-            # Insert Medical History
-            for diagnosis in selected_diagnoses:
-                cursor.execute("INSERT INTO MedicalHistory (patient_id, diagnosis) VALUES (LAST_INSERT_ID(), %s)", (diagnosis,))
-            for medication in selected_medications:
-                cursor.execute("INSERT INTO MedicationHistory (patient_id, medication) VALUES (LAST_INSERT_ID(), %s)", (medication,))
-            for allergy in selected_allergies:
-                cursor.execute("INSERT INTO AllergyHistory (patient_id, allergy) VALUES (LAST_INSERT_ID(), %s)", (allergy,))
-            for surgery in selected_surgeries:
-                cursor.execute("INSERT INTO SurgeryHistory (patient_id, surgery) VALUES (LAST_INSERT_ID(), %s)", (surgery,))
-            for rheumatologic_diagnosis in selected_rheumatologic_diagnoses:
-                cursor.execute("INSERT INTO RheumatologicHistory (patient_id, rheumatologic_diagnosis) VALUES (LAST_INSERT_ID(), %s)", (rheumatologic_diagnosis,))
-            for activity in selected_activity:
-                cursor.execute("INSERT INTO ActivityHistory (patient_id, activity) VALUES (LAST_INSERT_ID(), %s)", (activity,))
-            for family_history in selected_family_history:
-                cursor.execute("INSERT INTO FamilyHistory (patient_id, family_history) VALUES (LAST_INSERT_ID(), %s)", (family_history,))
-            # Insert Review of Systems
-            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (LAST_INSERT_ID(), %s, %s, %s, %s, %s, %s, %s)", (joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
-            # Insert Physical Examination Findings
-            cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (LAST_INSERT_ID(), %s, %s, %s, %s, %s, %s, %s)", (joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
-            # Insert Diagnostic Tests
-            cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (LAST_INSERT_ID(), %s)", (diagnostic_tests,))
-            # Insert Notes and Comments
-            cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (LAST_INSERT_ID(), %s)", (notes_and_comments,))
-
-            conn.commit()
+            # You can add code here to save the entered information or perform further actions
             st.success('Patient information submitted successfully.')
-
             # Display patient information in a box on the left side
             st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
             st.sidebar.write(f"Name: {name}")
@@ -201,7 +164,6 @@ def new_patient_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
-
 
 
 def past_patient_reports_page():
