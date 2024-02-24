@@ -103,11 +103,16 @@ def new_patient_page():
                 # Insert into PatientMedicalHistory with valid diagnosis_id
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
                 
-                # Consume any pending results
-                cursor.fetchall()
+                # Fetch and discard any pending results
+                while True:
+                    if cursor.nextset():
+                        pass
+                    else:
+                        break
             except mysql.connector.Error as e:
                 st.error(f"Error inserting diagnosis {diagnosis}: {e}")
         
+                
 
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
