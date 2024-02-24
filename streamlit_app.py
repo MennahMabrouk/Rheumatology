@@ -90,9 +90,12 @@ def new_patient_page():
         
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
-        for medication in selected_medications:
-            cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s LIMIT 1))", (patient_id, medication))
-        
+        if selected_medications:
+            for medication in selected_medications:
+                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, (SELECT medication_id FROM Medication WHERE name = %s LIMIT 1))", (patient_id, medication))
+        else:
+            st.warning("Please select at least one medication.")
+
         # Allergies Section
         selected_allergies = st.multiselect('Common Allergies', common_allergies)
         for allergy in selected_allergies:
