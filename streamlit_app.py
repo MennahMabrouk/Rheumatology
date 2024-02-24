@@ -1,5 +1,22 @@
+
+
+
 import streamlit as st
 import mysql.connector
+
+# Establish a connection to the MySQL database
+def connect_to_database():
+    try:
+        conn = mysql.connector.connect(
+            host="sql.freedb.tech",
+            user="freedb_Mennah",
+            password="?Fhu@EyzAe5BUPq",
+            database="freedb_Rheumatology"
+        )
+        return conn
+    except mysql.connector.Error as e:
+        st.error(f"Error connecting to MySQL database: {e}")
+        return None
 
 # Custom CSS for styling boxes with colors
 box_styles = """
@@ -20,20 +37,6 @@ box_styles = """
         }
     </style>
 """
-
-# Establish a connection to the MySQL database
-def connect_to_database():
-    try:
-        conn = mysql.connector.connect(
-            host="sql.freedb.tech",
-            user="freedb_Mennah",
-            password="?Fhu@EyzAe5BUPq",
-            database="freedb_Rheumatology"
-        )
-        return conn
-    except mysql.connector.Error as e:
-        st.error(f"Error connecting to MySQL database: {e}")
-        return None
 
 def main():
     st.title('Rheumatology Patient Checking Chart')
@@ -57,13 +60,6 @@ def new_patient_page():
 
     # Create a cursor object to execute SQL queries
     cursor = conn.cursor()
-    # Connect to the MySQL database
-    conn = connect_to_database()
-    if conn is None:
-        return
-
-    # Create a cursor object to execute SQL queries
-    cursor = conn.cursor(multi=True)
 
     # Patient Information Section
     st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
@@ -77,15 +73,7 @@ def new_patient_page():
         conn.commit()
         # Get the auto-generated patient_id
         patient_id = cursor.lastrowid
-
-        # Commit all pending queries
-        conn.commit()
-
-        # Close the cursor
-        cursor.close()
-        # Create a new cursor for the next set of queries
-        cursor = conn.cursor()
-
+        
         # Medical History Section
         st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
@@ -113,22 +101,131 @@ def new_patient_page():
                     # Retrieve the auto-generated diagnosis_id
                     cursor.execute("SELECT LAST_INSERT_ID()")  # Fetch the result
                     diagnosis_id = cursor.fetchone()[0]  # Fetch the result value from the tuple
-
+                
                 # Insert into PatientMedicalHistory with valid diagnosis_id
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+                # Commit the changes
+                conn.commit()
             except mysql.connector.Error as e:
                 st.error(f"Error inserting diagnosis {diagnosis}: {e}")
 
-        # Commit all pending queries
-        conn.commit()
 
-        # Close the cursor and connection
-        cursor.close()
-        conn.close()
+
+        # Current Medications
+        selected_medications = st.multiselect('Common Current Medications', common_medications)
+        for medication in selected_medications:
+            if medication == 'Other':
+                other_medication_name = st.text_input('Enter Other Medication')
+                if other_medication_name:
+                    # Insert 'Other' medication into the Medication table if it doesn't exist
+                    cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
+                    # Retrieve the last auto-generated medication_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    medication_id = cursor.fetchone()[0]
+                    # Insert into PatientCurrentMedication with valid medication_id
+                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+            else:
+                # Insert selected medication into the Medication table if it doesn't exist
+                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+                # Retrieve the last auto-generated medication_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                medication_id = cursor.fetchone()[0]
+                # Insert into PatientCurrentMedication with valid medication_id
+                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+
+        # Allergies Section
+        selected_allergies = st.multiselect('Common Allergies', common_allergies)
+        for allergy in selected_allergies:
+            cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, (SELECT allergy_id FROM Allergy WHERE name = %s LIMIT 1))", (patient_id, allergy))
+        
+        # Surgeries Section
+        selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
+        for surgery in selected_surgeries:
+            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, (SELECT surgery_id FROM Surgery WHERE name = %s LIMIT 1))", (patient_id, surgery))
+        
+        # Rheumatologic History and Family History Section
+        st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
+        
+        # Common Disease Activities
+        selected_activity = st.multiselect('Select Disease Activity', common_activities)
+        for activity in selected_activity:
+            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
+        
+        # Family History
+        selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
+        for family_history in selected_family_history:
+            cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, (SELECT history_id FROM FamilyHistory WHERE name = %s LIMIT 1))", (patient_id, family_history))
+
+        # Review of Systems Section
+        st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
+
+        joint_pain = st.checkbox('Joint Pain')
+        joint_stiffness = st.checkbox('Joint Stiffness')
+        swelling = st.checkbox('Swelling')
+        fatigue = st.checkbox('Fatigue')
+        fever = st.checkbox('Fever')
+        skin_rashes = st.checkbox('Skin Rashes or Lesions')
+        eye_problems = st.checkbox('Eye Problems')
+
+        # Physical Examination Findings Section
+        st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
+
+        # Expander for Physical Examination Findings
+        joint_swelling = st.checkbox('Joint Swelling')
+        joint_tenderness = st.checkbox('Joint Tenderness')
+        joint_warmth = st.checkbox('Joint Warmth')
+        joint_redness = st.checkbox('Joint Redness')
+        limited_range_of_motion = st.checkbox('Limited Range of Motion')
+        muscle_weakness = st.checkbox('Muscle Weakness')
+        # 'Other' checkbox and text input for other findings
+        other_finding = st.checkbox('Other')
+        other_finding_text = ""  # Initialize other_finding_text variable
+        if other_finding:
+            other_finding_text = st.text_input('Specify Other Finding')
+
+        # Diagnostic Tests Section
+        st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
+        diagnostic_tests = st.text_area('Enter Diagnostic Tests')
+
+        # Notes and Comments Section
+        st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
+        notes_and_comments = st.text_area('Enter Notes and Comments')
+
+        # Submit Button
+        if st.button('Submit'):
+            # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
+            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                           (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+            
+            cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                           (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
+            
+            cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
+            
+            cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
+
+            # Commit the transaction
+            conn.commit()
+
+            # Display success message
+            st.success('Patient information submitted successfully.')
+            
+            # Display patient information in a box on the left side
+            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+            st.sidebar.write(f"Name: {name}")
+            st.sidebar.write(f"Age: {age}")
+            st.sidebar.write(f"Gender: {gender}")
 
     except mysql.connector.Error as e:
         # Display error message if an error occurs during data insertion
         st.error(f"Error inserting data into MySQL database: {e}")
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
+
+
 
 def past_patient_reports_page():
     # Connect to the MySQL database
@@ -238,6 +335,9 @@ def past_patient_reports_page():
                 # Display the formatted output within the colored box
                 st.markdown(f'<div class="box">{formatted_output}</div>', unsafe_allow_html=True)
 
+
+            else:
+                st.write(f"No patient records found for {search_type}: {search_value}")
         except ValueError as ve:
             st.error(f"Error: {ve}")
         except Exception as e:
@@ -248,6 +348,7 @@ def past_patient_reports_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
+
 
 if __name__ == "__main__":
     main()
