@@ -318,11 +318,16 @@ def new_patient_page():
                 print("Error inserting Review of Systems data:", e)  # Add this line
 
         except mysql.connector.Error as e:
-            st.error(f"Error inserting data into database: {e}")
-            print("Error inserting data:", e)  # Add this line
+            st.error(f"Error submitting patient information: {e}")
+            print("Error submitting patient information:", e)
+        finally:
+            cursor.close()
+            conn.close()
+
 
 if __name__ == "__main__":
     main()
+
 
 def past_patient_reports_page():
     # Connect to the MySQL database
