@@ -149,11 +149,28 @@ def new_patient_page():
                 # Insert into PatientAllergy with valid allergy_id
                 cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
 
-        # Surgeries Section
-        selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
-        for surgery in selected_surgeries:
-            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, (SELECT surgery_id FROM Surgery WHERE name = %s LIMIT 1))", (patient_id, surgery))
-        
+            # Surgeries Section
+            selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
+            for surgery in selected_surgeries:
+                if surgery == 'Other':
+                    other_surgery_name = st.text_input('Enter Other Surgery')
+                    if other_surgery_name:
+                        # Insert 'Other' surgery into the Surgery table if it doesn't exist
+                        cursor.execute("INSERT INTO Surgery (name) VALUES (%s) ON DUPLICATE KEY UPDATE surgery_id=LAST_INSERT_ID(surgery_id)", (other_surgery_name,))
+                        # Retrieve the last auto-generated surgery_id
+                        cursor.execute("SELECT LAST_INSERT_ID()")
+                        surgery_id = cursor.fetchone()[0]
+                        # Insert into PatientSurgery with valid surgery_id
+                        cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+                else:
+                    # Insert selected surgery into the Surgery table if it doesn't exist
+                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s) ON DUPLICATE KEY UPDATE surgery_id=LAST_INSERT_ID(surgery_id)", (surgery,))
+                    # Retrieve the last auto-generated surgery_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    surgery_id = cursor.fetchone()[0]
+                    # Insert into PatientSurgery with valid surgery_id
+                    cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
         
