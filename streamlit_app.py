@@ -64,125 +64,73 @@ def new_patient_page():
     age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
-    # Insert Patient Information into the database
-    try:
-        cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-        conn.commit()
-        print("Patient information inserted successfully")  # Add this line
-    except mysql.connector.Error as e:
-        st.error(f"Error inserting patient information into database: {e}")
-        print("Error inserting patient information:", e)  # Add this line
-
     # Medical History Section
     st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
+    # Define common options
+    common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+    common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants', 'Other']
+    common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications', 'Other']
+    common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery', 'Other']
+    common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
+    common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
+    common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+
     # Previous Diagnoses
-    common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
     selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
     for diagnosis in selected_diagnoses:
-        try:
-            cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
-            conn.commit()
-            print("Diagnosis inserted successfully:", diagnosis)  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting diagnosis into database: {e}")
-            print("Error inserting diagnosis:", e)  # Add this line
+        cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
+    conn.commit()
 
     # Current Medications
-    common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants','Other']
     selected_medications = st.multiselect('Common Current Medications', common_medications)
     for medication in selected_medications:
-        try:
-            cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (medication,))
-            conn.commit()
-            print("Medication inserted successfully:", medication)  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting medication into database: {e}")
-            print("Error inserting medication:", e)  # Add this line
+        cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (medication,))
+    conn.commit()
 
     # Allergies Section
-    common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications','Other']
     selected_allergies = st.multiselect('Common Allergies', common_allergies)
     for allergy in selected_allergies:
-        try:
-            cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (allergy,))
-            conn.commit()
-            print("Allergy inserted successfully:", allergy)  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting allergy into database: {e}")
-            print("Error inserting allergy:", e)  # Add this line
+        cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (allergy,))
+    conn.commit()
 
     # Surgeries Section
-    common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery','Other']
     selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
     for surgery in selected_surgeries:
-        try:
-            cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
-            conn.commit()
-            print("Surgery inserted successfully:", surgery)  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting surgery into database: {e}")
-            print("Error inserting surgery:", e)  # Add this line
+        cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
+    conn.commit()
 
     # Rheumatologic History and Family History Section
     st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
 
     # Previous Rheumatologic Diagnoses
-    common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout','Other']
     selected_rheumatologic_diagnoses = st.multiselect('Common Previous Rheumatologic Diagnoses', common_rheumatologic_diagnoses)
-    for diagnosis in selected_rheumatologic_diagnoses:
-        try:
-            cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
-            conn.commit()
-            print("Rheumatologic diagnosis inserted successfully:", diagnosis)  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting rheumatologic diagnosis into database: {e}")
-            print("Error inserting rheumatologic diagnosis:", e)  # Add this line
+    for rheumatologic_diagnosis in selected_rheumatologic_diagnoses:
+        cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (rheumatologic_diagnosis,))
+    conn.commit()
 
     # Common Disease Activities
-    common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe','Other']
     selected_activity = st.multiselect('Select Disease Activity', common_activities)
     for activity in selected_activity:
-        try:
-            cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (activity,))
-            conn.commit()
-            print("Activity inserted successfully:", activity)  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting activity into database: {e}")
-            print("Error inserting activity:", e)  # Add this line
+        cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (activity,))
+    conn.commit()
 
     # Family History
-    common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis','Other']
     selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
-    for history in selected_family_history:
-        try:
-            cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (history,))
-            conn.commit()
-            print("Family history inserted successfully:", history)  # Add this line
+    for family_history in selected_family_history:
+        cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (family_history,))
+    conn.commit()
 
+    # Review of Systems Section
+    st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
 
-    '''
-        # Review of Systems Section
-        st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
-        joint_pain = st.checkbox('Joint Pain')
-        joint_stiffness = st.checkbox('Joint Stiffness')
-        swelling = st.checkbox('Swelling')
-        fatigue = st.checkbox('Fatigue')
-        fever = st.checkbox('Fever')
-        skin_rashes = st.checkbox('Skin Rashes or Lesions')
-        eye_problems = st.checkbox('Eye Problems')
-        
-        try:
-            # Insert Review of Systems data into the database
-            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
-            conn.commit()
-            print("Review of Systems data inserted successfully")  # Add this line
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting Review of Systems data into database: {e}")
-            print("Error inserting Review of Systems data:", e)  # Add this line
-    '''
-
-
+    joint_pain = st.checkbox('Joint Pain')
+    joint_stiffness = st.checkbox('Joint Stiffness')
+    swelling = st.checkbox('Swelling')
+    fatigue = st.checkbox('Fatigue')
+    fever = st.checkbox('Fever')
+    skin_rashes = st.checkbox('Skin Rashes or Lesions')
+    eye_problems = st.checkbox('Eye Problems')
 
     # Physical Examination Findings Section
     st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
@@ -199,41 +147,13 @@ def new_patient_page():
     if other_finding:
         other_finding_text = st.text_input('Specify Other Finding')
 
-    # Insert Physical Examination Findings data into the database
-    try:
-        cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
-        conn.commit()
-        print("Physical Examination Findings data inserted successfully")  # Add this line
-    except mysql.connector.Error as e:
-        st.error(f"Error inserting Physical Examination Findings data into database: {e}")
-        print("Error inserting Physical Examination Findings data:", e)  # Add this line
-
     # Diagnostic Tests Section
     st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
     diagnostic_tests = st.text_area('Enter Diagnostic Tests')
 
-    # Insert Diagnostic Tests data into the database
-    try:
-        cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
-        conn.commit()
-        print("Diagnostic Tests data inserted successfully")  # Add this line
-    except mysql.connector.Error as e:
-        st.error(f"Error inserting Diagnostic Tests data into database: {e}")
-        print("Error inserting Diagnostic Tests data:", e)  # Add this line
-
     # Notes and Comments Section
     st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
     notes_and_comments = st.text_area('Enter Notes and Comments')
-
-    # Insert Notes and Comments data into the database
-    try:
-        cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
-        conn.commit()
-        print("Notes and Comments data inserted successfully")  # Add this line
-    except mysql.connector.Error as e:
-        st.error(f"Error inserting Notes and Comments data into database: {e}")
-        print("Error inserting Notes and Comments data:", e)  # Add this line
-
     # Submit Button
     if st.button('Submit'):
         try:
@@ -244,89 +164,12 @@ def new_patient_page():
             st.sidebar.write(f"Name: {name}")
             st.sidebar.write(f"Age: {age}")
             st.sidebar.write(f"Gender: {gender}")
-
-            # Insert Patient data into the database
-            cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-            conn.commit()
-            patient_id = cursor.lastrowid
-            print("Patient data inserted successfully with ID:", patient_id)  # Add this line
-
-            # Insert Medical History data into the database
-            for diagnosis in selected_diagnoses:
-                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
-                conn.commit()
-                print("Diagnosis inserted successfully:", diagnosis)  # Add this line
-
-            # Insert Current Medications data into the database
-            for medication in selected_medications:
-                cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (medication,))
-                conn.commit()
-                print("Medication inserted successfully:", medication)  # Add this line
-
-            # Insert Allergies data into the database
-            for allergy in selected_allergies:
-                cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (allergy,))
-                conn.commit()
-                print("Allergy inserted successfully:", allergy)  # Add this line
-
-            # Insert Surgeries data into the database
-            for surgery in selected_surgeries:
-                cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
-                conn.commit()
-                print("Surgery inserted successfully:", surgery)  # Add this line
-
-            # Insert Rheumatologic History data into the database
-            for diagnosis in selected_rheumatologic_diagnoses:
-                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
-                conn.commit()
-                print("Rheumatologic diagnosis inserted successfully:", diagnosis)  # Add this line
-
-            # Insert Common Disease Activities data into the database
-            for activity in selected_activity:
-                cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (activity,))
-                conn.commit()
-                print("Activity inserted successfully:", activity)  # Add this line
-
-            # Insert Family History data into the database
-            for history in selected_family_history:
-                cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (history,))
-                conn.commit()
-                print("Family history inserted successfully:", history)  # Add this line
-
-            # Insert Review of Systems data into the database
-            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
-            conn.commit()
-            print("Review of Systems data inserted successfully")  # Add this line
-
-            # Insert Physical Examination Findings data into the database
-            cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
-            conn.commit()
-            print("Physical Examination Findings data inserted successfully")  # Add this line
-
-            # Insert Diagnostic Tests data into the database
-            cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
-            conn.commit()
-            print("Diagnostic Tests data inserted successfully")  # Add this line
-
-            # Insert Notes and Comments data into the database
-            cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
-            conn.commit()
-            print("Notes and Comments data inserted successfully")  # Add this line
-            # Insert Review of Systems data into the database
-            try:
-                cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
-                conn.commit()
-                print("Review of Systems data inserted successfully")  # Add this line
-            except mysql.connector.Error as e:
-                st.error(f"Error inserting Review of Systems data into database: {e}")
-                print("Error inserting Review of Systems data:", e)  # Add this line
-
         except mysql.connector.Error as e:
-            st.error(f"Error submitting patient information: {e}")
-            print("Error submitting patient information:", e)
-        finally:
-            cursor.close()
-            conn.close()
+            st.error(f"Error inserting data into MySQL database: {e}")
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
 
 
 if __name__ == "__main__":
