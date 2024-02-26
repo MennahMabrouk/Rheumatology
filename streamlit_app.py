@@ -321,7 +321,3 @@ def past_patient_reports_page():
     # Close the cursor and connection
     cursor.close()
     conn.close()
-
-
-if __name__ == "__main__":
-    main()
