@@ -267,26 +267,20 @@ def new_patient_page():
         cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
         
 
-        # Commit the transaction
-        conn.commit()
+            conn.commit()
 
-        # Display success message
-        st.success('Patient information submitted successfully.')
-        
-        # Display patient information in a box on the left side
-        st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-        st.sidebar.write(f"Name: {name}")
-        st.sidebar.write(f"Age: {age}")
-        st.sidebar.write(f"Gender: {gender}")
+            st.success('Patient information submitted successfully.')
+            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+            st.sidebar.write(f"Name: {name}")
+            st.sidebar.write(f"Age: {age}")
+            st.sidebar.write(f"Gender: {gender}")
 
-except mysql.connector.Error as e:
-    # Display error message if an error occurs during data insertion
-    st.error(f"Error inserting data into MySQL database: {e}")
+    except mysql.connector.Error as e:
+        st.error(f"Error inserting data into MySQL database: {e}")
 
-finally:
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
+    finally:
+        cursor.close()
+        conn.close()
 
 def past_patient_reports_page():
     # Connect to the MySQL database
