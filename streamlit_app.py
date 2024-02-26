@@ -268,11 +268,6 @@ def new_patient_page():
         cursor.close()
         conn.close()
 
-if __name__ == "__main__":
-    main()
-
-
-
 def past_patient_reports_page():
     # Connect to the MySQL database
     conn = connect_to_database()
