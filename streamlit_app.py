@@ -69,135 +69,131 @@ def new_patient_page():
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
     try:
-        # Get the auto-generated patient_id
-        patient_id = cursor.lastrowid
-        
-        # Medical History Section
-        st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
-
-        # Define common options
-        common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
-        common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants', 'Other']
-        common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications', 'Other']
-        common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery', 'Other']
-        common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
-        common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
-        common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
-
-        # Previous Diagnoses
-        selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
-        for diagnosis in selected_diagnoses:
-            if diagnosis == 'Other':
-                other_diagnosis_name = st.text_input('Enter Other Diagnosis')
-
-        # Current Medications
-        selected_medications = st.multiselect('Common Current Medications', common_medications)
-        for medication in selected_medications:
-            if medication == 'Other':
-                other_medication_name = st.text_input('Enter Other Medication')
-
-        # Allergies Section
-        selected_allergies = st.multiselect('Common Allergies', common_allergies)
-        for allergy in selected_allergies:
-            if allergy == 'Other':
-                other_allergy_name = st.text_input('Enter Other Allergy')
-
-        # Surgeries Section
-        selected_surgeries = surgeries_section(common_surgeries)
-        for surgery in selected_surgeries:
-            if surgery == 'Other':
-                other_surgery = st.text_input('Enter Other Surgery')
-
-        # Rheumatologic History and Family History Section
-        st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
-        
-        # Common Disease Activities
-        selected_activity = st.multiselect('Select Disease Activity', common_activities)
-        for disease_ac in selected_activity:
-            if disease_ac == 'Other':
-                other_disease_ac = st.text_input('Enter Other Common Disease Activities')
-
-        # Family History
-        selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
-        for family_history in selected_family_history:
-            if family_history == 'Other':
-                other_family_history_name = st.text_input('Enter Other Family History')
-
-        # Review of Systems Section
-        st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
-
-        joint_pain = st.checkbox('Joint Pain')
-        joint_stiffness = st.checkbox('Joint Stiffness')
-        swelling = st.checkbox('Swelling')
-        fatigue = st.checkbox('Fatigue')
-        fever = st.checkbox('Fever')
-        skin_rashes = st.checkbox('Skin Rashes or Lesions')
-        eye_problems = st.checkbox('Eye Problems')
-
-        # Physical Examination Findings Section
-        st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
-
-        # Expander for Physical Examination Findings
-        joint_swelling = st.checkbox('Joint Swelling')
-        joint_tenderness = st.checkbox('Joint Tenderness')
-        joint_warmth = st.checkbox('Joint Warmth')
-        joint_redness = st.checkbox('Joint Redness')
-        limited_range_of_motion = st.checkbox('Limited Range of Motion')
-        muscle_weakness = st.checkbox('Muscle Weakness')
-        # 'Other' checkbox and text input for other findings
-        other_finding_checkbox = st.checkbox('Other')
-        other_finding_text = ""  # Initialize other_finding_text variable
-        if other_finding_checkbox:
-            other_finding_text = st.text_input('Specify Other Finding')
-
-        # Diagnostic Tests Section
-        st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
-        diagnostic_tests = st.text_area('Enter Diagnostic Tests')
-
-        # Notes and Comments Section
-        st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
-        notes_and_comments = st.text_area('Enter Notes and Comments')
-
         # Submit Button
         if st.button('Submit'):
-            try:
-                # Insert patient information
-                cursor.execute("INSERT INTO PatientInformation (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-        
-                # Retrieve the auto-generated patient_id
-                patient_id = cursor.lastrowid
-        
-                # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
-                cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
-                               (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
-                
-                cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
-                               (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
-                
-                cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
-                
-                cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
-                
-                # Commit the transaction
-                conn.commit()
-        
-                # Display success message
-                st.success('Patient information submitted successfully.')
-                
-                # Display patient information in a box on the left side
-                st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-                st.sidebar.write(f"Name: {name}")
-                st.sidebar.write(f"Age: {age}")
-                st.sidebar.write(f"Gender: {gender}")
-        
-            except mysql.connector.Error as e:
-                # Display error message if an error occurs during data insertion
-                st.error(f"Error inserting data into MySQL database: {e}")
-        
-            finally:
-                # Close the cursor and connection
-                cursor.close()
-                conn.close()
+            # Insert patient information
+            cursor.execute("INSERT INTO PatientInformation (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
+
+            # Retrieve the auto-generated patient_id
+            patient_id = cursor.lastrowid
+
+            # Medical History Section
+            st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
+
+            # Define common options
+            common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+            common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants', 'Other']
+            common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications', 'Other']
+            common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery', 'Other']
+            common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
+            common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
+            common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+
+            # Previous Diagnoses
+            selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
+            for diagnosis in selected_diagnoses:
+                if diagnosis == 'Other':
+                    other_diagnosis_name = st.text_input('Enter Other Diagnosis')
+
+            # Current Medications
+            selected_medications = st.multiselect('Common Current Medications', common_medications)
+            for medication in selected_medications:
+                if medication == 'Other':
+                    other_medication_name = st.text_input('Enter Other Medication')
+
+            # Allergies Section
+            selected_allergies = st.multiselect('Common Allergies', common_allergies)
+            for allergy in selected_allergies:
+                if allergy == 'Other':
+                    other_allergy_name = st.text_input('Enter Other Allergy')
+
+            # Surgeries Section
+            selected_surgeries = surgeries_section(common_surgeries)
+            for surgery in selected_surgeries:
+                if surgery == 'Other':
+                    other_surgery = st.text_input('Enter Other Surgery')
+
+            # Rheumatologic History and Family History Section
+            st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
+            
+            # Common Disease Activities
+            selected_activity = st.multiselect('Select Disease Activity', common_activities)
+            for disease_ac in selected_activity:
+                if disease_ac == 'Other':
+                    other_disease_ac = st.text_input('Enter Other Common Disease Activities')
+
+            # Family History
+            selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
+            for family_history in selected_family_history:
+                if family_history == 'Other':
+                    other_family_history_name = st.text_input('Enter Other Family History')
+
+            # Review of Systems Section
+            st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
+
+            joint_pain = st.checkbox('Joint Pain')
+            joint_stiffness = st.checkbox('Joint Stiffness')
+            swelling = st.checkbox('Swelling')
+            fatigue = st.checkbox('Fatigue')
+            fever = st.checkbox('Fever')
+            skin_rashes = st.checkbox('Skin Rashes or Lesions')
+            eye_problems = st.checkbox('Eye Problems')
+
+            # Physical Examination Findings Section
+            st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
+
+            # Expander for Physical Examination Findings
+            joint_swelling = st.checkbox('Joint Swelling')
+            joint_tenderness = st.checkbox('Joint Tenderness')
+            joint_warmth = st.checkbox('Joint Warmth')
+            joint_redness = st.checkbox('Joint Redness')
+            limited_range_of_motion = st.checkbox('Limited Range of Motion')
+            muscle_weakness = st.checkbox('Muscle Weakness')
+            # 'Other' checkbox and text input for other findings
+            other_finding_checkbox = st.checkbox('Other')
+            other_finding_text = ""  # Initialize other_finding_text variable
+            if other_finding_checkbox:
+                other_finding_text = st.text_input('Specify Other Finding')
+
+            # Diagnostic Tests Section
+            st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
+            diagnostic_tests = st.text_area('Enter Diagnostic Tests')
+
+            # Notes and Comments Section
+            st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
+            notes_and_comments = st.text_area('Enter Notes and Comments')
+
+            # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
+            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                            (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+            
+            cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                            (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
+            
+            cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
+            
+            cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
+            
+            # Commit the transaction
+            conn.commit()
+
+            # Display success message
+            st.success('Patient information submitted successfully.')
+            
+            # Display patient information in a box on the left side
+            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+            st.sidebar.write(f"Name: {name}")
+            st.sidebar.write(f"Age: {age}")
+            st.sidebar.write(f"Gender: {gender}")
+
+    except mysql.connector.Error as e:
+        # Display error message if an error occurs during data insertion
+        st.error(f"Error inserting data into MySQL database: {e}")
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
 
 
 def past_patient_reports_page():
