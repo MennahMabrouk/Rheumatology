@@ -147,7 +147,7 @@ def new_patient_page():
         common_section(cursor, common_allergies, "Allergy", "name", patient_id)
         common_section(cursor, common_rheumatologic_diagnoses, "RheumatologicDiagnosis", "name", patient_id)
         common_section(cursor, common_activities, "Activity", "name", patient_id)
-        common_section(cursor, common_rheumatologic_diagnoses, "FamilyHistory", "name", patient_id)
+        common_section(cursor, PatientFamilyHistory, "FamilyHistory", "name", patient_id)
 
         # Surgeries Section
         surgeries_section(cursor, common_surgeries, patient_id)
