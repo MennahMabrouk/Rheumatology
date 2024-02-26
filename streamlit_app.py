@@ -83,7 +83,7 @@ def new_patient_page():
         common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
 
-        #other_diagnosis_name = None  # Initialize with a default value
+        other_diagnosis_name = None  # Initialize with a default value
 
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
