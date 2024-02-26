@@ -81,99 +81,37 @@ def new_patient_page():
     # Create a cursor object to execute SQL queries
     cursor = conn.cursor()
 
-    # Patient Information Section
-    st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-    name = st.text_input('Name')
-    age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
-    gender = st.selectbox('Gender', ['Male', 'Female'])
+    # Initialize empty lists to store data temporarily
+    selected_diagnoses_list = []
+    selected_medications_list = []
+    selected_allergies_list = []
+    selected_activity_list = []
+    selected_family_history_list = []
 
     try:
-        # Insert patient information into the Patient table
-        cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-        conn.commit()
-        # Get the auto-generated patient_id
-        patient_id = cursor.lastrowid
-        
+        # Patient Information Section
+        st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+        name = st.text_input('Name')
+        age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
+        gender = st.selectbox('Gender', ['Male', 'Female'])
+
         # Medical History Section
         st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
-
-        # Define common options
-        common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
-        common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants', 'Other']
-        common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications', 'Other']
-        common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery', 'Other']
-        common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
-        common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
-        common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
 
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
-            if diagnosis == 'Other':
-                other_diagnosis_name = st.text_input('Enter Other Diagnosis')
-                if other_diagnosis_name:
-                    # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
-                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
-                    # Retrieve the last auto-generated diagnosis_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    diagnosis_id = cursor.fetchone()[0]
-                    # Insert into PatientMedicalHistory with valid diagnosis_id
-                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-            else:
-                # Insert selected diagnosis into the Diagnosis table if it doesn't exist
-                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
-                # Retrieve the last auto-generated diagnosis_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                diagnosis_id = cursor.fetchone()[0]
-                # Insert into PatientMedicalHistory with valid diagnosis_id
-                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+            selected_diagnoses_list.append(diagnosis)
 
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
         for medication in selected_medications:
-            if medication == 'Other':
-                other_medication_name = st.text_input('Enter Other Medication')
-                if other_medication_name:
-                    # Insert 'Other' medication into the Medication table if it doesn't exist
-                    cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
-                    # Retrieve the last auto-generated medication_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    medication_id = cursor.fetchone()[0]
-                    # Insert into PatientCurrentMedication with valid medication_id
-                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
-            else:
-                # Insert selected medication into the Medication table if it doesn't exist
-                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
-                # Retrieve the last auto-generated medication_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                medication_id = cursor.fetchone()[0]
-                # Insert into PatientCurrentMedication with valid medication_id
-                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+            selected_medications_list.append(medication)
 
         # Allergies Section
         selected_allergies = st.multiselect('Common Allergies', common_allergies)
         for allergy in selected_allergies:
-            if allergy == 'Other':
-                other_allergy_name = st.text_input('Enter Other Allergy')
-                if other_allergy_name:
-                    # Insert 'Other' allergy into the Allergy table if it doesn't exist
-                    cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (other_allergy_name,))
-                    # Retrieve the last auto-generated allergy_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    allergy_id = cursor.fetchone()[0]
-                    # Insert into PatientAllergy with valid allergy_id
-                    cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
-            else:
-                # Insert selected allergy into the Allergy table if it doesn't exist
-                cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (allergy,))
-                # Retrieve the last auto-generated allergy_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                allergy_id = cursor.fetchone()[0]
-                # Insert into PatientAllergy with valid allergy_id
-                cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
-
-        # Surgeries Section
-        surgeries_section(cursor, common_surgeries, patient_id)
+            selected_allergies_list.append(allergy)
 
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
@@ -181,77 +119,84 @@ def new_patient_page():
         # Common Disease Activities
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
         for activity in selected_activity:
-            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
-        
+            selected_activity_list.append(activity)
+
         # Family History
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
         for family_history in selected_family_history:
-            if family_history == 'Other':
-                other_family_history_name = st.text_input('Enter Other Family History')
-                if other_family_history_name:
-                    # Insert 'Other' family history into the FamilyHistory table if it doesn't exist
-                    cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (other_family_history_name,))
-                    # Retrieve the last auto-generated history_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    family_history_id = cursor.fetchone()[0]
-                    # Insert into PatientFamilyHistory with valid history_id
-                    cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
-            else:
-                # Insert selected family history into the FamilyHistory table if it doesn't exist
-                cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (family_history,))
-                # Retrieve the last auto-generated history_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                family_history_id = cursor.fetchone()[0]
-                # Insert into PatientFamilyHistory with valid history_id
-                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
-
-        # Review of Systems Section
-        st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
-
-        joint_pain = st.checkbox('Joint Pain')
-        joint_stiffness = st.checkbox('Joint Stiffness')
-        swelling = st.checkbox('Swelling')
-        fatigue = st.checkbox('Fatigue')
-        fever = st.checkbox('Fever')
-        skin_rashes = st.checkbox('Skin Rashes or Lesions')
-        eye_problems = st.checkbox('Eye Problems')
-
-        # Physical Examination Findings Section
-        st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
-
-        # Expander for Physical Examination Findings
-        joint_swelling = st.checkbox('Joint Swelling')
-        joint_tenderness = st.checkbox('Joint Tenderness')
-        joint_warmth = st.checkbox('Joint Warmth')
-        joint_redness = st.checkbox('Joint Redness')
-        limited_range_of_motion = st.checkbox('Limited Range of Motion')
-        muscle_weakness = st.checkbox('Muscle Weakness')
-        # 'Other' checkbox and text input for other findings
-        other_finding_checkbox = st.checkbox('Other')
-        other_finding_text = ""  # Initialize other_finding_text variable
-        if other_finding_checkbox:
-            other_finding_text = st.text_input('Specify Other Finding')
-
-        # Diagnostic Tests Section
-        st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
-        diagnostic_tests = st.text_area('Enter Diagnostic Tests')
-
-        # Notes and Comments Section
-        st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
-        notes_and_comments = st.text_area('Enter Notes and Comments')
+            selected_family_history_list.append(family_history)
 
         # Submit Button
         if st.button('Submit'):
-            # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
-            cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
-                           (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+            # Insert patient information into the Patient table
+            cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
+            conn.commit()
+            # Get the auto-generated patient_id
+            patient_id = cursor.lastrowid
+
+            # Inserting previous diagnoses
+            for diagnosis in selected_diagnoses_list:
+                if diagnosis == 'Other':
+                    other_diagnosis_name = st.text_input('Enter Other Diagnosis')
+                    if other_diagnosis_name:
+                        cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
+                        cursor.execute("SELECT LAST_INSERT_ID()")
+                        diagnosis_id = cursor.fetchone()[0]
+                        cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+                else:
+                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    diagnosis_id = cursor.fetchone()[0]
+                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+
+            # Inserting current medications
+            for medication in selected_medications_list:
+                if medication == 'Other':
+                    other_medication_name = st.text_input('Enter Other Medication')
+                    if other_medication_name:
+                        cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
+                        cursor.execute("SELECT LAST_INSERT_ID()")
+                        medication_id = cursor.fetchone()[0]
+                        cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+                else:
+                    cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    medication_id = cursor.fetchone()[0]
+                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+
+            # Inserting allergies
+            for allergy in selected_allergies_list:
+                if allergy == 'Other':
+                    other_allergy_name = st.text_input('Enter Other Allergy')
+                    if other_allergy_name:
+                        cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (other_allergy_name,))
+                        cursor.execute("SELECT LAST_INSERT_ID()")
+                        allergy_id = cursor.fetchone()[0]
+                        cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+                else:
+                    cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (allergy,))
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    allergy_id = cursor.fetchone()[0]
+                    cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+
+            # Inserting disease activities
+            for activity in selected_activity_list:
+                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
             
-            cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
-                           (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
-            
-            cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
-            
-            cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
+            # Inserting family history
+            for family_history in selected_family_history_list:
+                if family_history == 'Other':
+                    other_family_history_name = st.text_input('Enter Other Family History')
+                    if other_family_history_name:
+                        cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (other_family_history_name,))
+                        cursor.execute("SELECT LAST_INSERT_ID()")
+                        family_history_id = cursor.fetchone()[0]
+                        cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+                else:
+                    cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (family_history,))
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    family_history_id = cursor.fetchone()[0]
+                    cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
 
             # Commit the transaction
             conn.commit()
@@ -273,7 +218,6 @@ def new_patient_page():
         # Close the cursor and connection
         cursor.close()
         conn.close()
-
 
 def past_patient_reports_page():
     # Connect to the MySQL database
