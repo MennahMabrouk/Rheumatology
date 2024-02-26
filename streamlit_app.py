@@ -72,6 +72,12 @@ def surgeries_section(cursor, common_surgeries, patient_id):
             # Insert into PatientSurgery with valid surgery_id
             cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
 
+
+def fetch_existing_items(cursor, table_name, column_name):
+    cursor.execute(f"SELECT {column_name} FROM {table_name}")
+    return set(row[0] for row in cursor.fetchall())
+
+
 def new_patient_page():
     # Connect to the MySQL database
     conn = connect_to_database()
