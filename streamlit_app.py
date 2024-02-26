@@ -49,28 +49,17 @@ def main():
     elif page == "Past Patient Reports":
         past_patient_reports_page()
 
-# Define surgeries_section function outside of new_patient_page function
-def surgeries_section(cursor, common_surgeries, patient_id):
-    selected_surgeries_widget = st.multiselect('Common Surgeries or Procedures', common_surgeries)
-    for surgery in selected_surgeries_widget:
+def surgeries_section(common_surgeries):
+    selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
+    other_surgeries = []
+    for surgery in selected_surgeries:
         if surgery == 'Other':
             other_surgery_name = st.text_input('Enter Other Surgery')
             if other_surgery_name:
-                # Insert 'Other' surgery into the Surgery table if it doesn't exist
-                cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
-                # Retrieve the last auto-generated surgery_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                surgery_id = cursor.fetchone()[0]
-                # Insert into PatientSurgery with valid surgery_id
-                cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+                other_surgeries.append(other_surgery_name)
         else:
-            # Insert selected surgery into the Surgery table if it doesn't exist
-            cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
-            # Retrieve the last auto-generated surgery_id
-            cursor.execute("SELECT LAST_INSERT_ID()")
-            surgery_id = cursor.fetchone()[0]
-            # Insert into PatientSurgery with valid surgery_id
-            cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+            other_surgeries.append(surgery)
+    return other_surgeries
 
 def new_patient_page(common_diagnoses, common_medications, common_allergies, common_activities, common_family_history):
     # Connect to the MySQL database
