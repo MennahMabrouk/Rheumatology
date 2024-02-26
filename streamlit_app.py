@@ -70,12 +70,12 @@ def new_patient_page():
 
     try:
         # Insert patient information into the Patient table
-        #cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-        #conn.commit()
+        cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
+        conn.commit()
 
         # Get the auto-generated patient_id
-        #patient_id = cursor.lastrowid
-        
+        patient_id = cursor.lastrowid
+
         # Medical History Section
         st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
@@ -106,7 +106,6 @@ def new_patient_page():
             if allergy == 'Other':
                 other_allergy_name = st.text_input('Enter Other Allergy')
 
-
         # Surgeries Section
         selected_surgeries = surgeries_section(common_surgeries)
         for surgery in selected_surgeries:
@@ -124,7 +123,6 @@ def new_patient_page():
         for family_history in selected_family_history:
             if family_history == 'Other':
                 other_family_history_name = st.text_input('Enter Other Family History')
-
 
         # Review of Systems Section
         st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
@@ -163,27 +161,22 @@ def new_patient_page():
 
         # Submit Button
         if st.button('Submit'):
-            # Insert patient information into the Patient table
-            cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-            conn.commit()
-    
-            patient_id = cursor.lastrowid
-        try:
-            # Insert activities into the PatientActivity table
-            for activity in selected_activity:
-                # Retrieve activity_id for each selected activity
-                cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
-                activity_row = cursor.fetchone()
-                if activity_row:
-                    activity_id = activity_row[0]
-                    # Insert into PatientActivity with valid activity_id
-                    cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
-                    conn.commit()
-                    activity_id = cursor.lastrowid
-    
-                else:
-                    st.error(f"Activity '{activity}' not found in the database.")
-                    continue
+            try:
+                # Insert activities into the PatientActivity table
+                for activity in selected_activity:
+                    # Retrieve activity_id for each selected activity
+                    cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
+                    activity_row = cursor.fetchone()
+                    if activity_row:
+                        activity_id = activity_row[0]
+                        # Insert into PatientActivity with valid activity_id
+                        cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+                        conn.commit()
+                        activity_id = cursor.lastrowid
+
+                    else:
+                        st.error(f"Activity '{activity}' not found in the database.")
+                        continue
 
             
             if other_diagnosis_name:
@@ -267,17 +260,22 @@ def new_patient_page():
             
             cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
             
-            # Commit the transaction
-            conn.commit()
 
-            # Display success message
-            st.success('Patient information submitted successfully.')
-            
-            # Display patient information in a box on the left side
-            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-            st.sidebar.write(f"Name: {name}")
-            st.sidebar.write(f"Age: {age}")
-            st.sidebar.write(f"Gender: {gender}")
+                # Commit the transaction
+                conn.commit()
+
+                # Display success message
+                st.success('Patient information submitted successfully.')
+                
+                # Display patient information in a box on the left side
+                st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+                st.sidebar.write(f"Name: {name}")
+                st.sidebar.write(f"Age: {age}")
+                st.sidebar.write(f"Gender: {gender}")
+
+            except mysql.connector.Error as e:
+                # Display error message if an error occurs during data insertion
+                st.error(f"Error inserting data into MySQL database: {e}")
 
     except mysql.connector.Error as e:
         # Display error message if an error occurs during data insertion
