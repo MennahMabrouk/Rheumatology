@@ -158,47 +158,46 @@ def new_patient_page():
         st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
         notes_and_comments = st.text_area('Enter Notes and Comments')
 
-# Submit Button
-if st.button('Submit'):
-    try:
-        # Insert patient information
-        cursor.execute("INSERT INTO PatientInformation (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-
-        # Retrieve the auto-generated patient_id
-        patient_id = cursor.lastrowid
-
-        # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
-        cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
-                       (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+        # Submit Button
+        if st.button('Submit'):
+            try:
+                # Insert patient information
+                cursor.execute("INSERT INTO PatientInformation (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
         
-        cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
-                       (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
+                # Retrieve the auto-generated patient_id
+                patient_id = cursor.lastrowid
         
-        cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
+                # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
+                cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                               (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
+                
+                cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                               (patient_id, joint_swelling, joint_tenderness, joint_warmth, joint_redness, limited_range_of_motion, muscle_weakness, other_finding_text))
+                
+                cursor.execute("INSERT INTO DiagnosticTests (patient_id, test_results) VALUES (%s, %s)", (patient_id, diagnostic_tests))
+                
+                cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
+                
+                # Commit the transaction
+                conn.commit()
         
-        cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
+                # Display success message
+                st.success('Patient information submitted successfully.')
+                
+                # Display patient information in a box on the left side
+                st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+                st.sidebar.write(f"Name: {name}")
+                st.sidebar.write(f"Age: {age}")
+                st.sidebar.write(f"Gender: {gender}")
         
-        # Commit the transaction
-        conn.commit()
-
-        # Display success message
-        st.success('Patient information submitted successfully.')
+            except mysql.connector.Error as e:
+                # Display error message if an error occurs during data insertion
+                st.error(f"Error inserting data into MySQL database: {e}")
         
-        # Display patient information in a box on the left side
-        st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-        st.sidebar.write(f"Name: {name}")
-        st.sidebar.write(f"Age: {age}")
-        st.sidebar.write(f"Gender: {gender}")
-
-    except mysql.connector.Error as e:
-        # Display error message if an error occurs during data insertion
-        st.error(f"Error inserting data into MySQL database: {e}")
-
-    finally:
-        # Close the cursor and connection
-        cursor.close()
-        conn.close()
-
+            finally:
+                # Close the cursor and connection
+                cursor.close()
+                conn.close()
 
 
 
