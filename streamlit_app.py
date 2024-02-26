@@ -105,8 +105,8 @@ def new_patient_page():
         # Surgeries Section
         selected_surgeries = surgeries_section(common_surgeries)
         for surgery in selected_surgeries:
-            # Handle selected surgeries here without database insertion
-            pass
+            if surgery == 'Other':
+                other_surgery = st.text_input('Enter Other Surgery')
 
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
