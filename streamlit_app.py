@@ -48,49 +48,6 @@ def main():
         new_patient_page()
     elif page == "Past Patient Reports":
         past_patient_reports_page()
-def fetch_existing_items(cursor, table_name, column_name, condition=None):
-    if condition:
-        cursor.execute(f"SELECT {column_name} FROM {table_name} WHERE {condition}")
-    else:
-        cursor.execute(f"SELECT {column_name} FROM {table_name}")
-    return set(row[0] for row in cursor.fetchall())
-
-def common_section(cursor, common_items, table_name, column_name, patient_id):
-    existing_items = fetch_existing_items(cursor, table_name, column_name)
-
-    selected_items = st.multiselect(f'Common {table_name}', common_items)
-    for item in selected_items:
-        if item == 'Other':
-            other_item_name = st.text_input(f'Enter Other {table_name[:-1]}')
-            if other_item_name:
-                # Check if the item already exists for the patient
-                if other_item_name in existing_items:
-                    st.warning(f"{other_item_name} already exists for this patient. Updating...")
-                    continue
-
-                # Insert 'Other' item into the table
-                cursor.execute(f"INSERT INTO {table_name} ({column_name}) VALUES (%s)", (other_item_name,))
-                existing_items.add(other_item_name)
-                # Retrieve the item_id
-                cursor.execute(f"SELECT LAST_INSERT_ID()")
-                item_id = cursor.fetchone()[0]
-                # Insert into Patient table with valid item_id
-                cursor.execute(f"INSERT INTO Patient{table_name} (patient_id, {table_name[:-1]}_id) VALUES (%s, %s)", (patient_id, item_id))
-        else:
-            # Check if the item already exists for the patient
-            if item in existing_items:
-                st.warning(f"{item} already exists for this patient. Updating...")
-                continue
-
-            # Insert selected item into the table
-            cursor.execute(f"INSERT INTO {table_name} ({column_name}) VALUES (%s)", (item,))
-            existing_items.add(item)
-            # Retrieve the item_id
-            cursor.execute(f"SELECT LAST_INSERT_ID()")
-            item_id = cursor.fetchone()[0]
-            # Insert into Patient table with valid item_id
-            cursor.execute(f"INSERT INTO Patient{table_name} (patient_id, {table_name[:-1]}_id) VALUES (%s, %s)", (patient_id, item_id))
-
 
 # Define surgeries_section function outside of new_patient_page function
 def surgeries_section(cursor, common_surgeries, patient_id):
