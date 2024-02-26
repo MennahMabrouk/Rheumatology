@@ -168,22 +168,22 @@ def new_patient_page():
             conn.commit()
     
             patient_id = cursor.lastrowid
-
-        # Insert activities into the PatientActivity table
-        for activity in selected_activity:
-            # Retrieve activity_id for each selected activity
-            cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
-            activity_row = cursor.fetchone()
-            if activity_row:
-                activity_id = activity_row[0]
-                # Insert into PatientActivity with valid activity_id
-                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
-                conn.commit()
-                activity_id = cursor.lastrowid
-
-            else:
-                st.error(f"Activity '{activity}' not found in the database.")
-                continue
+        try:
+            # Insert activities into the PatientActivity table
+            for activity in selected_activity:
+                # Retrieve activity_id for each selected activity
+                cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
+                activity_row = cursor.fetchone()
+                if activity_row:
+                    activity_id = activity_row[0]
+                    # Insert into PatientActivity with valid activity_id
+                    cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+                    conn.commit()
+                    activity_id = cursor.lastrowid
+    
+                else:
+                    st.error(f"Activity '{activity}' not found in the database.")
+                    continue
 
             
             if other_diagnosis_name:
