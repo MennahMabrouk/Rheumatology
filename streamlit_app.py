@@ -68,6 +68,11 @@ def new_patient_page():
     age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
+    try:
+
+        # Get the auto-generated patient_id
+        patient_id = cursor.lastrowid
+        
         # Medical History Section
         st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
