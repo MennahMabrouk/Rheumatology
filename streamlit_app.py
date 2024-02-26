@@ -49,34 +49,65 @@ def main():
     elif page == "Past Patient Reports":
         past_patient_reports_page()
 
-# Define surgeries_section function outside of new_patient_page function
+def fetch_existing_items(cursor, table_name, column_name):
+    cursor.execute(f"SELECT {column_name} FROM {table_name}")
+    return set(row[0] for row in cursor.fetchall())
+
 def surgeries_section(cursor, common_surgeries, patient_id):
+    existing_surgeries = fetch_existing_items(cursor, "Surgery", "name")
+
     selected_surgeries_widget = st.multiselect('Common Surgeries or Procedures', common_surgeries)
     for surgery in selected_surgeries_widget:
         if surgery == 'Other':
             other_surgery_name = st.text_input('Enter Other Surgery')
             if other_surgery_name:
                 # Insert 'Other' surgery into the Surgery table if it doesn't exist
-                cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
-                # Retrieve the last auto-generated surgery_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
+                if other_surgery_name not in existing_surgeries:
+                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
+                    existing_surgeries.add(other_surgery_name)
+                # Retrieve the surgery_id
+                cursor.execute("SELECT surgery_id FROM Surgery WHERE name = %s", (other_surgery_name,))
                 surgery_id = cursor.fetchone()[0]
                 # Insert into PatientSurgery with valid surgery_id
                 cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
         else:
             # Insert selected surgery into the Surgery table if it doesn't exist
-            cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
-            # Retrieve the last auto-generated surgery_id
-            cursor.execute("SELECT LAST_INSERT_ID()")
+            if surgery not in existing_surgeries:
+                cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
+                existing_surgeries.add(surgery)
+            # Retrieve the surgery_id
+            cursor.execute("SELECT surgery_id FROM Surgery WHERE name = %s", (surgery,))
             surgery_id = cursor.fetchone()[0]
             # Insert into PatientSurgery with valid surgery_id
             cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
 
+def common_section(cursor, common_items, table_name, column_name, patient_id):
+    existing_items = fetch_existing_items(cursor, table_name, column_name)
 
-def fetch_existing_items(cursor, table_name, column_name):
-    cursor.execute(f"SELECT {column_name} FROM {table_name}")
-    return set(row[0] for row in cursor.fetchall())
-
+    selected_items = st.multiselect(f'Common {table_name}', common_items)
+    for item in selected_items:
+        if item == 'Other':
+            other_item_name = st.text_input(f'Enter Other {table_name[:-1]}')
+            if other_item_name:
+                # Insert 'Other' item into the table if it doesn't exist
+                if other_item_name not in existing_items:
+                    cursor.execute(f"INSERT INTO {table_name} ({column_name}) VALUES (%s)", (other_item_name,))
+                    existing_items.add(other_item_name)
+                # Retrieve the item_id
+                cursor.execute(f"SELECT {table_name[:-1]}_id FROM {table_name} WHERE {column_name} = %s", (other_item_name,))
+                item_id = cursor.fetchone()[0]
+                # Insert into Patient table with valid item_id
+                cursor.execute(f"INSERT INTO Patient{table_name} (patient_id, {table_name[:-1]}_id) VALUES (%s, %s)", (patient_id, item_id))
+        else:
+            # Insert selected item into the table if it doesn't exist
+            if item not in existing_items:
+                cursor.execute(f"INSERT INTO {table_name} ({column_name}) VALUES (%s)", (item,))
+                existing_items.add(item)
+            # Retrieve the item_id
+            cursor.execute(f"SELECT {table_name[:-1]}_id FROM {table_name} WHERE {column_name} = %s", (item,))
+            item_id = cursor.fetchone()[0]
+            # Insert into Patient table with valid item_id
+            cursor.execute(f"INSERT INTO Patient{table_name} (patient_id, {table_name[:-1]}_id) VALUES (%s, %s)", (patient_id, item_id))
 
 def new_patient_page():
     # Connect to the MySQL database
@@ -88,15 +119,6 @@ def new_patient_page():
     cursor = conn.cursor()
 
     try:
-        # Fetch all common items once
-        common_diagnoses = fetch_existing_items(cursor, "Diagnosis", "name")
-        common_medications = fetch_existing_items(cursor, "Medication", "name")
-        common_allergies = fetch_existing_items(cursor, "Allergy", "name")
-        common_rheumatologic_diagnoses = fetch_existing_items(cursor, "RheumatologicDiagnosis", "name")
-        common_activities = fetch_existing_items(cursor, "Activity", "name")
-        common_family_history = fetch_existing_items(cursor, "FamilyHistory", "name")
-        common_surgeries = fetch_existing_items(cursor, "Surgery", "name")
-
         # Patient Information Section
         st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
         name = st.text_input('Name')
@@ -112,12 +134,20 @@ def new_patient_page():
         # Medical History Section
         st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
 
+        # Define common options
+        common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+        common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants', 'Other']
+        common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications', 'Other']
+        common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
+        common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
+        common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+
         common_section(cursor, common_diagnoses, "Diagnosis", "name", patient_id)
         common_section(cursor, common_medications, "Medication", "name", patient_id)
         common_section(cursor, common_allergies, "Allergy", "name", patient_id)
         common_section(cursor, common_rheumatologic_diagnoses, "RheumatologicDiagnosis", "name", patient_id)
         common_section(cursor, common_activities, "Activity", "name", patient_id)
-        common_section(cursor, common_family_history, "FamilyHistory", "name", patient_id)
+        common_section(cursor, common_rheumatologic_diagnoses, "FamilyHistory", "name", patient_id)
 
         # Surgeries Section
         surgeries_section(cursor, common_surgeries, patient_id)
@@ -136,6 +166,7 @@ def new_patient_page():
         # Physical Examination Findings Section
         st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
 
+        # Expander for Physical Examination Findings
         joint_swelling = st.checkbox('Joint Swelling')
         joint_tenderness = st.checkbox('Joint Tenderness')
         joint_warmth = st.checkbox('Joint Warmth')
