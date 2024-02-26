@@ -69,7 +69,6 @@ def new_patient_page():
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
     try:
-
         # Get the auto-generated patient_id
         patient_id = cursor.lastrowid
         
@@ -90,22 +89,6 @@ def new_patient_page():
         for diagnosis in selected_diagnoses:
             if diagnosis == 'Other':
                 other_diagnosis_name = st.text_input('Enter Other Diagnosis')
-                if other_diagnosis_name:
-                    # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
-                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
-                    # Retrieve the last auto-generated diagnosis_id
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    diagnosis_id = cursor.fetchone()[0]
-                    # Insert into PatientMedicalHistory with valid diagnosis_id
-                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-            else:
-                # Insert selected diagnosis into the Diagnosis table if it doesn't exist
-                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
-                # Retrieve the last auto-generated diagnosis_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                diagnosis_id = cursor.fetchone()[0]
-                # Insert into PatientMedicalHistory with valid diagnosis_id
-                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
 
         # Current Medications
         selected_medications = st.multiselect('Common Current Medications', common_medications)
