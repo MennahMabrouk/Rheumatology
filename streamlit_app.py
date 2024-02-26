@@ -93,7 +93,7 @@ def new_patient_page():
         # Previous Diagnoses
         selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
         for diagnosis in selected_diagnoses:
-            if diagnosis == 'Other':
+            if other_diagnosis_name is not None:
                 other_diagnosis_name = st.text_input('Enter Other Diagnosis')
 
         # Current Medications
