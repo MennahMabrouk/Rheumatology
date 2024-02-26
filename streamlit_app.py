@@ -141,6 +141,7 @@ def new_patient_page():
         common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
         common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
+        common_surgeries = ['Surgery1', 'Surgery2', 'Surgery3', 'Other']  # Define common surgeries here
 
         common_section(cursor, common_diagnoses, "Diagnosis", "name", patient_id)
         common_section(cursor, common_medications, "Medication", "name", patient_id)
@@ -150,7 +151,7 @@ def new_patient_page():
         common_section(cursor, common_rheumatologic_diagnoses, "FamilyHistory", "name", patient_id)
 
         # Surgeries Section
-        surgeries_section(cursor, common_surgeries, patient_id)
+        surgeries_section(cursor, common_surgeries, patient_id)  # Pass common_surgeries here
 
         # Review of Systems Section
         st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
