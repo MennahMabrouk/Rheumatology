@@ -153,6 +153,12 @@ def new_patient_page(common_diagnoses, common_medications, common_allergies, com
                     cursor.execute("SELECT LAST_INSERT_ID()")
                     medication_id = cursor.fetchone()[0]
                     cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+           # Inserting surgeries
+                for surgery_name in selected_surgeries_list:
+                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s) ON DUPLICATE KEY UPDATE name=name", (surgery_name,))
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    surgery_id = cursor.fetchone()[0]
+                    cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
 
             # Inserting allergies
             for allergy in selected_allergies_list:
