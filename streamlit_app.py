@@ -115,22 +115,12 @@ def new_patient_page():
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
 
-
-'''
         # Common Disease Activities
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
-        for activity in selected_activity:
-                # Retrieve activity_id for each selected activity
-                cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
-                activity_row = cursor.fetchone()
-                if activity_row:
-                    activity_id = activity_row[0]
-                    # Insert into PatientActivity with valid activity_id
-                    cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
-                    conn.commit()
-                    activity_id = cursor.lastrowid
-    '''
-    
+        for other_activity in selected_activity:
+            if other_activity == 'Other':
+                other_activity_name = st.text_input('Enter Other Family History')
+
 
         # Family History
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
@@ -251,7 +241,23 @@ def new_patient_page():
                 # Insert into PatientFamilyHistory with valid history_id
                 cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
 
-            
+            if other_activity_name:
+                # Insert 'Other' activity into the Activity table if it doesn't exist
+                cursor.execute("INSERT INTO Activity (name) VALUES (%s) ON DUPLICATE KEY UPDATE activity_id=LAST_INSERT_ID(activity_id)", (other_activity_name,))
+                # Retrieve the last auto-generated activity_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                activity_id = cursor.fetchone()[0]
+                # Insert into PatientActivity with valid activity_id
+                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+            else:
+                # Insert selected activity into the Activity table if it doesn't exist
+                cursor.execute("INSERT INTO Activity (name) VALUES (%s) ON DUPLICATE KEY UPDATE activity_id=LAST_INSERT_ID(activity_id)", (activity,))
+                # Retrieve the last auto-generated activity_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                activity_id = cursor.fetchone()[0]
+                # Insert into PatientActivity with valid activity_id
+                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
             cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
                            (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
