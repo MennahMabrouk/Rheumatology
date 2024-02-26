@@ -72,6 +72,7 @@ def new_patient_page(common_diagnoses, common_medications, common_allergies, com
 
     # Initialize empty lists to store data temporarily
     selected_diagnoses_list = []
+    selected_surgeries_list = []
     selected_medications_list = []
     selected_allergies_list = []
     selected_activity_list = []
