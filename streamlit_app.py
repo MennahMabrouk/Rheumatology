@@ -118,9 +118,7 @@ def new_patient_page():
         
         # Common Disease Activities
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
-        for activity in selected_activity:
-            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
-        
+
         # Family History
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
         for family_history in selected_family_history:
@@ -239,7 +237,10 @@ def new_patient_page():
                 family_history_id = cursor.fetchone()[0]
                 # Insert into PatientFamilyHistory with valid history_id
                 cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
-                
+
+            for activity in selected_activity:
+                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
+        
 
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
             cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
