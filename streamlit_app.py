@@ -179,6 +179,8 @@ def new_patient_page():
                 # Insert into PatientActivity with valid activity_id
                 cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
                 conn.commit()
+                activity_id = cursor.lastrowid
+
             else:
                 st.error(f"Activity '{activity}' not found in the database.")
                 continue
