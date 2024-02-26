@@ -49,6 +49,7 @@ def main():
     elif page == "Past Patient Reports":
         past_patient_reports_page()
 
+# Define surgeries_section function outside of new_patient_page function
 def surgeries_section(common_surgeries):
     selected_surgeries = st.multiselect('Common Surgeries or Procedures', common_surgeries)
     other_surgeries = []
@@ -61,7 +62,7 @@ def surgeries_section(common_surgeries):
             other_surgeries.append(surgery)
     return other_surgeries
 
-def new_patient_page(common_diagnoses, common_medications, common_allergies, common_activities, common_family_history):
+def new_patient_page(common_diagnoses, common_medications, common_allergies, common_activities, common_family_history, common_surgeries):
     # Connect to the MySQL database
     conn = connect_to_database()
     if conn is None:
@@ -116,6 +117,9 @@ def new_patient_page(common_diagnoses, common_medications, common_allergies, com
         for family_history in selected_family_history:
             selected_family_history_list.append(family_history)
 
+        # Surgeries Section
+        selected_surgeries_list = surgeries_section(common_surgeries)
+
         # Submit Button
         if st.button('Submit'):
             # Insert patient information into the Patient table
@@ -153,12 +157,13 @@ def new_patient_page(common_diagnoses, common_medications, common_allergies, com
                     cursor.execute("SELECT LAST_INSERT_ID()")
                     medication_id = cursor.fetchone()[0]
                     cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
-           # Inserting surgeries
-                for surgery_name in selected_surgeries_list:
-                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s) ON DUPLICATE KEY UPDATE name=name", (surgery_name,))
-                    cursor.execute("SELECT LAST_INSERT_ID()")
-                    surgery_id = cursor.fetchone()[0]
-                    cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+
+            # Inserting surgeries
+            for surgery_name in selected_surgeries_list:
+                cursor.execute("INSERT INTO Surgery (name) VALUES (%s) ON DUPLICATE KEY UPDATE name=name", (surgery_name,))
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                surgery_id = cursor.fetchone()[0]
+                cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
 
             # Inserting allergies
             for allergy in selected_allergies_list:
@@ -215,8 +220,8 @@ def new_patient_page(common_diagnoses, common_medications, common_allergies, com
         cursor.close()
         conn.close()
 
-# Call the function with common lists as arguments
-new_patient_page(common_diagnoses, common_medications, common_allergies, common_activities, common_family_history)
+# Call the function with common lists as arguments, including common_surgeries
+new_patient_page(common_diagnoses, common_medications, common_allergies, common_activities, common_family_history, common_surgeries)
 
 
 def past_patient_reports_page():
