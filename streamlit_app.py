@@ -69,9 +69,9 @@ def new_patient_page():
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
     try:
-                # Insert patient information into the Patient table
-        cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
-        conn.commit()
+        # Insert patient information into the Patient table
+        #cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
+        #conn.commit()
 
         # Get the auto-generated patient_id
         patient_id = cursor.lastrowid
