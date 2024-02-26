@@ -182,9 +182,14 @@ def new_patient_page():
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
         for activity in selected_activity:
             cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
-        
+                
         # Family History
-        selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
+        selected_family_history = []
+        for family_history_option in common_family_history:
+            checkbox = st.checkbox(family_history_option)
+            if checkbox:
+                selected_family_history.append(family_history_option)
+        
         for family_history in selected_family_history:
             cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, (SELECT history_id FROM FamilyHistory WHERE name = %s LIMIT 1))", (patient_id, family_history))
 
