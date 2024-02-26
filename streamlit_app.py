@@ -182,22 +182,28 @@ def new_patient_page():
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
         for activity in selected_activity:
             cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
-                
-        # Family History
-        selected_family_history = []
-        for family_history_option in common_family_history:
-            if family_history_option == 'Other':
-                other_family_history = st.checkbox(family_history_option)
-                if other_family_history:
-                    other_family_history_name = st.text_input('Enter Other Family History')
-                    if other_family_history_name:
-                        selected_family_history.append(other_family_history_name)
-            else:
-                if st.checkbox(family_history_option):
-                    selected_family_history.append(family_history_option)
         
+        # Family History
+        selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
         for family_history in selected_family_history:
-            cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, (SELECT history_id FROM FamilyHistory WHERE name = %s LIMIT 1))", (patient_id, family_history))
+            if family_history == 'Other':
+                other_family_history_name = st.text_input('Enter Other Family History')
+                if other_family_history_name:
+                    # Insert 'Other' family history into the FamilyHistory table if it doesn't exist
+                    cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (other_family_history_name,))
+                    # Retrieve the last auto-generated history_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    family_history_id = cursor.fetchone()[0]
+                    # Insert into PatientFamilyHistory with valid history_id
+                    cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+            else:
+                # Insert selected family history into the FamilyHistory table if it doesn't exist
+                cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (family_history,))
+                # Retrieve the last auto-generated history_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                family_history_id = cursor.fetchone()[0]
+                # Insert into PatientFamilyHistory with valid history_id
+                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
 
         # Review of Systems Section
         st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
@@ -221,9 +227,9 @@ def new_patient_page():
         limited_range_of_motion = st.checkbox('Limited Range of Motion')
         muscle_weakness = st.checkbox('Muscle Weakness')
         # 'Other' checkbox and text input for other findings
-        other_finding = st.checkbox('Other')
+        other_finding_checkbox = st.checkbox('Other')
         other_finding_text = ""  # Initialize other_finding_text variable
-        if other_finding:
+        if other_finding_checkbox:
             other_finding_text = st.text_input('Specify Other Finding')
 
         # Diagnostic Tests Section
@@ -267,6 +273,7 @@ def new_patient_page():
         # Close the cursor and connection
         cursor.close()
         conn.close()
+
 
 def past_patient_reports_page():
     # Connect to the MySQL database
