@@ -114,9 +114,23 @@ def new_patient_page():
 
         # Rheumatologic History and Family History Section
         st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
-        
+
+
+'''
         # Common Disease Activities
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
+        for activity in selected_activity:
+                # Retrieve activity_id for each selected activity
+                cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
+                activity_row = cursor.fetchone()
+                if activity_row:
+                    activity_id = activity_row[0]
+                    # Insert into PatientActivity with valid activity_id
+                    cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+                    conn.commit()
+                    activity_id = cursor.lastrowid
+    '''
+    
 
         # Family History
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
@@ -137,6 +151,7 @@ def new_patient_page():
 
         # Physical Examination Findings Section
         st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
+        
 
         # Expander for Physical Examination Findings
         joint_swelling = st.checkbox('Joint Swelling')
@@ -161,22 +176,11 @@ def new_patient_page():
 
         # Submit Button
         if st.button('Submit'):
-            try:
-                # Insert activities into the PatientActivity table
-                for activity in selected_activity:
-                    # Retrieve activity_id for each selected activity
-                    cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
-                    activity_row = cursor.fetchone()
-                    if activity_row:
-                        activity_id = activity_row[0]
-                        # Insert into PatientActivity with valid activity_id
-                        cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
-                        conn.commit()
-                        activity_id = cursor.lastrowid
+            # Insert patient information into the Patient table
+            cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
+            conn.commit()
 
-                    else:
-                        st.error(f"Activity '{activity}' not found in the database.")
-                        continue
+            patient_id = cursor.lastrowid
 
             
             if other_diagnosis_name:
@@ -261,21 +265,17 @@ def new_patient_page():
             cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
             
 
-                # Commit the transaction
-                conn.commit()
+            # Commit the transaction
+            conn.commit()
 
-                # Display success message
-                st.success('Patient information submitted successfully.')
-                
-                # Display patient information in a box on the left side
-                st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-                st.sidebar.write(f"Name: {name}")
-                st.sidebar.write(f"Age: {age}")
-                st.sidebar.write(f"Gender: {gender}")
-
-            except mysql.connector.Error as e:
-                # Display error message if an error occurs during data insertion
-                st.error(f"Error inserting data into MySQL database: {e}")
+            # Display success message
+            st.success('Patient information submitted successfully.')
+            
+            # Display patient information in a box on the left side
+            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+            st.sidebar.write(f"Name: {name}")
+            st.sidebar.write(f"Age: {age}")
+            st.sidebar.write(f"Gender: {gender}")
 
     except mysql.connector.Error as e:
         # Display error message if an error occurs during data insertion
