@@ -267,13 +267,13 @@ def new_patient_page():
         cursor.execute("INSERT INTO NotesAndComments (patient_id, notes_and_comments) VALUES (%s, %s)", (patient_id, notes_and_comments))
         
 
-            conn.commit()
+        conn.commit()
 
-            st.success('Patient information submitted successfully.')
-            st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-            st.sidebar.write(f"Name: {name}")
-            st.sidebar.write(f"Age: {age}")
-            st.sidebar.write(f"Gender: {gender}")
+        st.success('Patient information submitted successfully.')
+        st.sidebar.markdown('<div class="left-box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+        st.sidebar.write(f"Name: {name}")
+        st.sidebar.write(f"Age: {age}")
+        st.sidebar.write(f"Gender: {gender}")
 
     except mysql.connector.Error as e:
         st.error(f"Error inserting data into MySQL database: {e}")
