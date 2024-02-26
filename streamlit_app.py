@@ -227,6 +227,10 @@ def new_patient_page():
 
         # Submit Button
         if st.button('Submit'):
+            # Insert patient information into the Patient table
+            cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
+            conn.commit()
+    
             patient_id = cursor.lastrowid
 
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
