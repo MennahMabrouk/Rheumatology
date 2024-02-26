@@ -72,7 +72,7 @@ def surgeries_section(cursor, common_surgeries, patient_id):
             # Insert into PatientSurgery with valid surgery_id
             cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
 
-def new_patient_page():
+def new_patient_page(common_diagnoses, common_medications, common_allergies, common_activities, common_family_history):
     # Connect to the MySQL database
     conn = connect_to_database()
     if conn is None:
@@ -218,6 +218,10 @@ def new_patient_page():
         # Close the cursor and connection
         cursor.close()
         conn.close()
+
+# Call the function with common lists as arguments
+new_patient_page(common_diagnoses, common_medications, common_allergies, common_activities, common_family_history)
+
 
 def past_patient_reports_page():
     # Connect to the MySQL database
