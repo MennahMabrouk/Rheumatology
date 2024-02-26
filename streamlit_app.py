@@ -49,65 +49,28 @@ def main():
     elif page == "Past Patient Reports":
         past_patient_reports_page()
 
-def fetch_existing_items(cursor, table_name, column_name):
-    cursor.execute(f"SELECT {column_name} FROM {table_name}")
-    return set(row[0] for row in cursor.fetchall())
-
+# Define surgeries_section function outside of new_patient_page function
 def surgeries_section(cursor, common_surgeries, patient_id):
-    existing_surgeries = fetch_existing_items(cursor, "Surgery", "name")
-
     selected_surgeries_widget = st.multiselect('Common Surgeries or Procedures', common_surgeries)
     for surgery in selected_surgeries_widget:
         if surgery == 'Other':
             other_surgery_name = st.text_input('Enter Other Surgery')
             if other_surgery_name:
                 # Insert 'Other' surgery into the Surgery table if it doesn't exist
-                if other_surgery_name not in existing_surgeries:
-                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
-                    existing_surgeries.add(other_surgery_name)
-                # Retrieve the surgery_id
-                cursor.execute("SELECT surgery_id FROM Surgery WHERE name = %s", (other_surgery_name,))
+                cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
+                # Retrieve the last auto-generated surgery_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
                 surgery_id = cursor.fetchone()[0]
                 # Insert into PatientSurgery with valid surgery_id
                 cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
         else:
             # Insert selected surgery into the Surgery table if it doesn't exist
-            if surgery not in existing_surgeries:
-                cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
-                existing_surgeries.add(surgery)
-            # Retrieve the surgery_id
-            cursor.execute("SELECT surgery_id FROM Surgery WHERE name = %s", (surgery,))
+            cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
+            # Retrieve the last auto-generated surgery_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
             surgery_id = cursor.fetchone()[0]
             # Insert into PatientSurgery with valid surgery_id
             cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
-
-def common_section(cursor, common_items, table_name, column_name, patient_id):
-    existing_items = fetch_existing_items(cursor, table_name, column_name)
-
-    selected_items = st.multiselect(f'Common {table_name}', common_items)
-    for item in selected_items:
-        if item == 'Other':
-            other_item_name = st.text_input(f'Enter Other {table_name[:-1]}')
-            if other_item_name:
-                # Insert 'Other' item into the table if it doesn't exist
-                if other_item_name not in existing_items:
-                    cursor.execute(f"INSERT INTO {table_name} ({column_name}) VALUES (%s)", (other_item_name,))
-                    existing_items.add(other_item_name)
-                # Retrieve the item_id
-                cursor.execute(f"SELECT {table_name[:-1]}_id FROM {table_name} WHERE {column_name} = %s", (other_item_name,))
-                item_id = cursor.fetchone()[0]
-                # Insert into Patient table with valid item_id
-                cursor.execute(f"INSERT INTO Patient{table_name} (patient_id, {table_name[:-1]}_id) VALUES (%s, %s)", (patient_id, item_id))
-        else:
-            # Insert selected item into the table if it doesn't exist
-            if item not in existing_items:
-                cursor.execute(f"INSERT INTO {table_name} ({column_name}) VALUES (%s)", (item,))
-                existing_items.add(item)
-            # Retrieve the item_id
-            cursor.execute(f"SELECT {table_name[:-1]}_id FROM {table_name} WHERE {column_name} = %s", (item,))
-            item_id = cursor.fetchone()[0]
-            # Insert into Patient table with valid item_id
-            cursor.execute(f"INSERT INTO Patient{table_name} (patient_id, {table_name[:-1]}_id) VALUES (%s, %s)", (patient_id, item_id))
 
 def new_patient_page():
     # Connect to the MySQL database
@@ -118,13 +81,13 @@ def new_patient_page():
     # Create a cursor object to execute SQL queries
     cursor = conn.cursor()
 
-    try:
-        # Patient Information Section
-        st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
-        name = st.text_input('Name')
-        age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
-        gender = st.selectbox('Gender', ['Male', 'Female'])
+    # Patient Information Section
+    st.markdown('<div class="box"><h4>Patient Information</h4></div>', unsafe_allow_html=True)
+    name = st.text_input('Name')
+    age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
+    gender = st.selectbox('Gender', ['Male', 'Female'])
 
+    try:
         # Insert patient information into the Patient table
         cursor.execute("INSERT INTO Patient (name, age, gender) VALUES (%s, %s, %s)", (name, age, gender))
         conn.commit()
@@ -138,20 +101,109 @@ def new_patient_page():
         common_diagnoses = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
         common_medications = ['NSAIDs', 'Corticosteroids', 'DMARDs', 'Biologics', 'Pain Relievers', 'Immunosuppressants', 'Other']
         common_allergies = ['Pollen', 'Dust', 'Pet Dander', 'Mold', 'Food', 'Medications', 'Other']
+        common_surgeries = ['Appendectomy', 'Tonsillectomy', 'Hernia Repair', 'Gallbladder Removal', 'Knee Surgery', 'Cataract Surgery', 'Other']
         common_rheumatologic_diagnoses = ['Rheumatoid Arthritis', 'Ankylosing Spondylitis', 'Systemic Lupus Erythematosus', 'Sjögren\'s Syndrome', 'Psoriatic Arthritis', 'Gout', 'Other']
         common_activities = ['Active', 'Inactive', 'Flaring', 'Remission', 'Mild', 'Moderate', 'Severe', 'Other']
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
-        common_surgeries = ['Surgery1', 'Surgery2', 'Surgery3', 'Other']  # Define common surgeries here
 
-        common_section(cursor, common_diagnoses, "Diagnosis", "name", patient_id)
-        common_section(cursor, common_medications, "Medication", "name", patient_id)
-        common_section(cursor, common_allergies, "Allergy", "name", patient_id)
-        common_section(cursor, common_rheumatologic_diagnoses, "RheumatologicDiagnosis", "name", patient_id)
-        common_section(cursor, common_activities, "Activity", "name", patient_id)
-        common_section(cursor, common_rheumatologic_diagnoses, "FamilyHistory", "name", patient_id)
+        # Previous Diagnoses
+        selected_diagnoses = st.multiselect('Common Previous Diagnoses', common_diagnoses)
+        for diagnosis in selected_diagnoses:
+            if diagnosis == 'Other':
+                other_diagnosis_name = st.text_input('Enter Other Diagnosis')
+                if other_diagnosis_name:
+                    # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
+                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
+                    # Retrieve the last auto-generated diagnosis_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    diagnosis_id = cursor.fetchone()[0]
+                    # Insert into PatientMedicalHistory with valid diagnosis_id
+                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+            else:
+                # Insert selected diagnosis into the Diagnosis table if it doesn't exist
+                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
+                # Retrieve the last auto-generated diagnosis_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                diagnosis_id = cursor.fetchone()[0]
+                # Insert into PatientMedicalHistory with valid diagnosis_id
+                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+
+        # Current Medications
+        selected_medications = st.multiselect('Common Current Medications', common_medications)
+        for medication in selected_medications:
+            if medication == 'Other':
+                other_medication_name = st.text_input('Enter Other Medication')
+                if other_medication_name:
+                    # Insert 'Other' medication into the Medication table if it doesn't exist
+                    cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
+                    # Retrieve the last auto-generated medication_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    medication_id = cursor.fetchone()[0]
+                    # Insert into PatientCurrentMedication with valid medication_id
+                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+            else:
+                # Insert selected medication into the Medication table if it doesn't exist
+                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+                # Retrieve the last auto-generated medication_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                medication_id = cursor.fetchone()[0]
+                # Insert into PatientCurrentMedication with valid medication_id
+                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+
+        # Allergies Section
+        selected_allergies = st.multiselect('Common Allergies', common_allergies)
+        for allergy in selected_allergies:
+            if allergy == 'Other':
+                other_allergy_name = st.text_input('Enter Other Allergy')
+                if other_allergy_name:
+                    # Insert 'Other' allergy into the Allergy table if it doesn't exist
+                    cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (other_allergy_name,))
+                    # Retrieve the last auto-generated allergy_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    allergy_id = cursor.fetchone()[0]
+                    # Insert into PatientAllergy with valid allergy_id
+                    cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+            else:
+                # Insert selected allergy into the Allergy table if it doesn't exist
+                cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (allergy,))
+                # Retrieve the last auto-generated allergy_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                allergy_id = cursor.fetchone()[0]
+                # Insert into PatientAllergy with valid allergy_id
+                cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
 
         # Surgeries Section
-        surgeries_section(cursor, common_surgeries, patient_id)  # Pass common_surgeries here
+        surgeries_section(cursor, common_surgeries, patient_id)
+
+        # Rheumatologic History and Family History Section
+        st.markdown('<div class="box"><h4>Rheumatologic and Family History</h4></div>', unsafe_allow_html=True)
+        
+        # Common Disease Activities
+        selected_activity = st.multiselect('Select Disease Activity', common_activities)
+        for activity in selected_activity:
+            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
+        
+        # Family History
+        selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
+        for family_history in selected_family_history:
+            if family_history == 'Other':
+                other_family_history_name = st.text_input('Enter Other Family History')
+                if other_family_history_name:
+                    # Insert 'Other' family history into the FamilyHistory table if it doesn't exist
+                    cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (other_family_history_name,))
+                    # Retrieve the last auto-generated history_id
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    family_history_id = cursor.fetchone()[0]
+                    # Insert into PatientFamilyHistory with valid history_id
+                    cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+            else:
+                # Insert selected family history into the FamilyHistory table if it doesn't exist
+                cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (family_history,))
+                # Retrieve the last auto-generated history_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                family_history_id = cursor.fetchone()[0]
+                # Insert into PatientFamilyHistory with valid history_id
+                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
 
         # Review of Systems Section
         st.markdown('<div class="box"><h4>Review of Systems</h4></div>', unsafe_allow_html=True)
@@ -221,7 +273,6 @@ def new_patient_page():
         # Close the cursor and connection
         cursor.close()
         conn.close()
-
 
 
 def past_patient_reports_page():
