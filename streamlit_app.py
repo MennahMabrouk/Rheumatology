@@ -183,6 +183,7 @@ def new_patient_page():
                 st.error(f"Activity '{activity}' not found in the database.")
                 continue
 
+            
             if other_diagnosis_name:
                     # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
                     cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
