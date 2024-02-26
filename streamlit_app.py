@@ -113,6 +113,9 @@ def new_patient_page():
         
         # Common Disease Activities
         selected_activity = st.multiselect('Select Disease Activity', common_activities)
+        for disease_ac in selected_activity:
+            if disease_ac == 'Other':
+                other_disease_ac = st.text_input('Enter Other Common Disease Activities')
 
         # Family History
         selected_family_history = st.multiselect('Common Family History of Rheumatic Diseases', common_family_history)
