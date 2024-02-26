@@ -169,6 +169,20 @@ def new_patient_page():
     
             patient_id = cursor.lastrowid
 
+        # Insert activities into the PatientActivity table
+        for activity in selected_activity:
+            # Retrieve activity_id for each selected activity
+            cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (activity,))
+            activity_row = cursor.fetchone()
+            if activity_row:
+                activity_id = activity_row[0]
+                # Insert into PatientActivity with valid activity_id
+                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+                conn.commit()
+            else:
+                st.error(f"Activity '{activity}' not found in the database.")
+                continue
+
             if other_diagnosis_name:
                     # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
                     cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
@@ -238,10 +252,7 @@ def new_patient_page():
                 # Insert into PatientFamilyHistory with valid history_id
                 cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
 
-            for activity in selected_activity:
-                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, (SELECT activity_id FROM Activity WHERE name = %s LIMIT 1))", (patient_id, activity))
-        
-
+            
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
             cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
                            (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
