@@ -181,7 +181,6 @@ def new_patient_page():
             conn.commit()
 
             patient_id = cursor.lastrowid
-
             
             if other_diagnosis_name:
                     # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
