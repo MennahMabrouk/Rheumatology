@@ -74,7 +74,7 @@ def new_patient_page():
         #conn.commit()
 
         # Get the auto-generated patient_id
-        patient_id = cursor.lastrowid
+        #patient_id = cursor.lastrowid
         
         # Medical History Section
         st.markdown('<div class="box"><h4>Medical History</h4></div>', unsafe_allow_html=True)
@@ -227,6 +227,8 @@ def new_patient_page():
 
         # Submit Button
         if st.button('Submit'):
+            patient_id = cursor.lastrowid
+
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
             cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
                            (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
