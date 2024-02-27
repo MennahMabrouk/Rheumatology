@@ -190,21 +190,25 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
 
         if other_medication_name:
-                # Insert 'Other' medication into the Medication table if it doesn't exist
-                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
-                # Retrieve the last auto-generated medication_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                medication_id = cursor.fetchone()[0]
-                # Insert into PatientCurrentMedication with valid medication_id
-                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
-        else:
-            # Insert selected medication into the Medication table if it doesn't exist
-            cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+            # Insert 'Other' medication into the Medication table if it doesn't exist
+            cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
             # Retrieve the last auto-generated medication_id
             cursor.execute("SELECT LAST_INSERT_ID()")
             medication_id = cursor.fetchone()[0]
             # Insert into PatientCurrentMedication with valid medication_id
             cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+        else:
+            # Get the selected medication from the common_medications list
+            selected_medication = [m for m in selected_medications if m != 'Other']
+            if selected_medication:
+                medication = selected_medication[0]
+                # Insert selected medication into the Medication table if it doesn't exist
+                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+                # Retrieve the last auto-generated medication_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                medication_id = cursor.fetchone()[0]
+                # Insert into PatientCurrentMedication with valid medication_id
+                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
 
 
         if other_allergy_name:
