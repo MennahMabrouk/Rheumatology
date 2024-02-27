@@ -293,12 +293,12 @@ def new_patient_page():
                 st.sidebar.write(f"Age: {age}")
                 st.sidebar.write(f"Gender: {gender}")
     
-        except mysql.connector.Error as e:
-            st.error(f"Error inserting data into MySQL database: {e}")
-    
-        finally:
-            cursor.close()
-            conn.close()
+    except mysql.connector.Error as e:
+        st.error(f"Error inserting data into MySQL database: {e}")
+
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def past_patient_reports_page():
