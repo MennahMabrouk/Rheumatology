@@ -212,21 +212,26 @@ def new_patient_page():
 
 
         if other_allergy_name:
-                # Insert 'Other' allergy into the Allergy table if it doesn't exist
-                cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (other_allergy_name,))
-                # Retrieve the last auto-generated allergy_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                allergy_id = cursor.fetchone()[0]
-                # Insert into PatientAllergy with valid allergy_id
-                cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
-        else:
-            # Insert selected allergy into the Allergy table if it doesn't exist
-            cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (allergy,))
+            # Insert 'Other' allergy into the Allergy table if it doesn't exist
+            cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (other_allergy_name,))
             # Retrieve the last auto-generated allergy_id
             cursor.execute("SELECT LAST_INSERT_ID()")
             allergy_id = cursor.fetchone()[0]
             # Insert into PatientAllergy with valid allergy_id
             cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+        else:
+            # Get the selected allergy from the common_allergies list
+            selected_allergy = [a for a in selected_allergies if a != 'Other']
+            if selected_allergy:
+                allergy = selected_allergy[0]
+                # Insert selected allergy into the Allergy table if it doesn't exist
+                cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (allergy,))
+                # Retrieve the last auto-generated allergy_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                allergy_id = cursor.fetchone()[0]
+                # Insert into PatientAllergy with valid allergy_id
+                cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+
 
         if other_family_history_name:
                 # Insert 'Other' family history into the FamilyHistory table if it doesn't exist
