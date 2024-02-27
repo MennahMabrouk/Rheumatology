@@ -232,23 +232,26 @@ def new_patient_page():
                 # Insert into PatientAllergy with valid allergy_id
                 cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
 
-
         if other_family_history_name:
-                # Insert 'Other' family history into the FamilyHistory table if it doesn't exist
-                cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (other_family_history_name,))
-                # Retrieve the last auto-generated history_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                family_history_id = cursor.fetchone()[0]
-                # Insert into PatientFamilyHistory with valid history_id
-                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
-        else:
-            # Insert selected family history into the FamilyHistory table if it doesn't exist
-            cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (family_history,))
+            # Insert 'Other' family history into the FamilyHistory table if it doesn't exist
+            cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (other_family_history_name,))
             # Retrieve the last auto-generated history_id
             cursor.execute("SELECT LAST_INSERT_ID()")
             family_history_id = cursor.fetchone()[0]
             # Insert into PatientFamilyHistory with valid history_id
             cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+        else:
+            # Get the selected family history from the common_family_history list
+            selected_family_history = [fh for fh in selected_family_history if fh != 'Other']
+            if selected_family_history:
+                family_history = selected_family_history[0]
+                # Insert selected family history into the FamilyHistory table if it doesn't exist
+                cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (family_history,))
+                # Retrieve the last auto-generated history_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                family_history_id = cursor.fetchone()[0]
+                # Insert into PatientFamilyHistory with valid history_id
+                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
 
         if other_activity_name:
             # Insert 'Other' activity into the Activity table if it doesn't exist
