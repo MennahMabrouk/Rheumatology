@@ -167,7 +167,9 @@ def new_patient_page():
 
             patient_id = cursor.lastrowid
 
-            if other_diagnosis_name:
+
+        
+        if other_diagnosis_name:
                 # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
                 cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
                 # Retrieve the last auto-generated diagnosis_id
@@ -175,14 +177,83 @@ def new_patient_page():
                 diagnosis_id = cursor.fetchone()[0]
                 # Insert into PatientMedicalHistory with valid diagnosis_id
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-            else:
-                # Insert selected diagnosis into the Diagnosis table if it doesn't exist
-                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
-                # Retrieve the last auto-generated diagnosis_id
+        else:
+            # Insert selected diagnosis into the Diagnosis table if it doesn't exist
+            cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
+            # Retrieve the last auto-generated diagnosis_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            diagnosis_id = cursor.fetchone()[0]
+            # Insert into PatientMedicalHistory with valid diagnosis_id
+            cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+
+        if other_medication_name:
+                # Insert 'Other' medication into the Medication table if it doesn't exist
+                cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (other_medication_name,))
+                # Retrieve the last auto-generated medication_id
                 cursor.execute("SELECT LAST_INSERT_ID()")
-                diagnosis_id = cursor.fetchone()[0]
-                # Insert into PatientMedicalHistory with valid diagnosis_id
-                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+                medication_id = cursor.fetchone()[0]
+                # Insert into PatientCurrentMedication with valid medication_id
+                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+        else:
+            # Insert selected medication into the Medication table if it doesn't exist
+            cursor.execute("INSERT INTO Medication (name) VALUES (%s) ON DUPLICATE KEY UPDATE medication_id=LAST_INSERT_ID(medication_id)", (medication,))
+            # Retrieve the last auto-generated medication_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            medication_id = cursor.fetchone()[0]
+            # Insert into PatientCurrentMedication with valid medication_id
+            cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+
+
+        if other_allergy_name:
+                # Insert 'Other' allergy into the Allergy table if it doesn't exist
+                cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (other_allergy_name,))
+                # Retrieve the last auto-generated allergy_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                allergy_id = cursor.fetchone()[0]
+                # Insert into PatientAllergy with valid allergy_id
+                cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+        else:
+            # Insert selected allergy into the Allergy table if it doesn't exist
+            cursor.execute("INSERT INTO Allergy (name) VALUES (%s) ON DUPLICATE KEY UPDATE allergy_id=LAST_INSERT_ID(allergy_id)", (allergy,))
+            # Retrieve the last auto-generated allergy_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            allergy_id = cursor.fetchone()[0]
+            # Insert into PatientAllergy with valid allergy_id
+            cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+
+        if other_family_history_name:
+                # Insert 'Other' family history into the FamilyHistory table if it doesn't exist
+                cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (other_family_history_name,))
+                # Retrieve the last auto-generated history_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                family_history_id = cursor.fetchone()[0]
+                # Insert into PatientFamilyHistory with valid history_id
+                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+        else:
+            # Insert selected family history into the FamilyHistory table if it doesn't exist
+            cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s) ON DUPLICATE KEY UPDATE history_id=LAST_INSERT_ID(history_id)", (family_history,))
+            # Retrieve the last auto-generated history_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            family_history_id = cursor.fetchone()[0]
+            # Insert into PatientFamilyHistory with valid history_id
+            cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+
+        if other_activity_name:
+            # Insert 'Other' activity into the Activity table if it doesn't exist
+            cursor.execute("INSERT INTO Activity (name) VALUES (%s) ON DUPLICATE KEY UPDATE activity_id=LAST_INSERT_ID(activity_id)", (other_activity_name,))
+            # Retrieve the last auto-generated activity_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            activity_id = cursor.fetchone()[0]
+            # Insert into PatientActivity with valid activity_id
+            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+        else:
+            # Insert selected activity into the Activity table if it doesn't exist
+            cursor.execute("INSERT INTO Activity (name) VALUES (%s) ON DUPLICATE KEY UPDATE activity_id=LAST_INSERT_ID(activity_id)", (activity,))
+            # Retrieve the last auto-generated activity_id
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            activity_id = cursor.fetchone()[0]
+            # Insert into PatientActivity with valid activity_id
+            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
 
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
             cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
