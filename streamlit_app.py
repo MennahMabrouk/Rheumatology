@@ -68,6 +68,8 @@ def new_patient_page():
     age = st.number_input('Age', min_value=0, max_value=150, value=0, step=1)
     gender = st.selectbox('Gender', ['Male', 'Female'])
 
+    other_diagnosis_name = None
+
     try:
 
 
