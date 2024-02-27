@@ -262,13 +262,17 @@ def new_patient_page():
             # Insert into PatientActivity with valid activity_id
             cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
         else:
-            # Insert selected activity into the Activity table if it doesn't exist
-            cursor.execute("INSERT INTO Activity (name) VALUES (%s) ON DUPLICATE KEY UPDATE activity_id=LAST_INSERT_ID(activity_id)", (activity,))
-            # Retrieve the last auto-generated activity_id
-            cursor.execute("SELECT LAST_INSERT_ID()")
-            activity_id = cursor.fetchone()[0]
-            # Insert into PatientActivity with valid activity_id
-            cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+            # Get the selected activity from the selected_activity list
+            selected_activity = [act for act in selected_activity if act != 'Other']
+            if selected_activity:
+                activity = selected_activity[0]
+                # Insert selected activity into the Activity table if it doesn't exist
+                cursor.execute("INSERT INTO Activity (name) VALUES (%s) ON DUPLICATE KEY UPDATE activity_id=LAST_INSERT_ID(activity_id)", (activity,))
+                # Retrieve the last auto-generated activity_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                activity_id = cursor.fetchone()[0]
+                # Insert into PatientActivity with valid activity_id
+                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
 
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
             cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
