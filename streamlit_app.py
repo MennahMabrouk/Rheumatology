@@ -84,46 +84,28 @@ def new_patient_page():
         common_family_history = ['Arthritis', 'Lupus', 'Fibromyalgia', 'Gout', 'Osteoporosis', 'Rheumatoid Arthritis', 'Other']
 
         # Diagnosis
-        selected_diagnosis = st.selectbox('Diagnosis', common_diagnoses)
-        if selected_diagnosis == 'Other':
-            other_diagnosis_name = st.text_input('Enter Other Diagnosis')
-        else:
-            other_diagnosis_name = None
+        selected_diagnoses = st.multiselect('Diagnosis', common_diagnoses)
+        other_diagnosis_name = st.text_input('Enter Other Diagnosis') if 'Other' in selected_diagnoses else None
 
         # Medication
-        selected_medication = st.selectbox('Medication', common_medications)
-        if selected_medication == 'Other':
-            other_medication_name = st.text_input('Enter Other Medication')
-        else:
-            other_medication_name = None
+        selected_medications = st.multiselect('Medication', common_medications)
+        other_medication_name = st.text_input('Enter Other Medication') if 'Other' in selected_medications else None
 
         # Allergy
-        selected_allergy = st.selectbox('Allergy', common_allergies)
-        if selected_allergy == 'Other':
-            other_allergy_name = st.text_input('Enter Other Allergy')
-        else:
-            other_allergy_name = None
+        selected_allergies = st.multiselect('Allergy', common_allergies)
+        other_allergy_name = st.text_input('Enter Other Allergy') if 'Other' in selected_allergies else None
 
         # Surgery
-        selected_surgery = st.selectbox('Surgery', common_surgeries)
-        if selected_surgery == 'Other':
-            other_surgery_name = st.text_input('Enter Other Surgery')
-        else:
-            other_surgery_name = None
+        selected_surgeries = st.multiselect('Surgery', common_surgeries)
+        other_surgery_name = st.text_input('Enter Other Surgery') if 'Other' in selected_surgeries else None
 
         # Activity
-        selected_activity = st.selectbox('Activity', common_activities)
-        if selected_activity == 'Other':
-            other_activity_name = st.text_input('Enter Other Activity')
-        else:
-            other_activity_name = None
+        selected_activities = st.multiselect('Activity', common_activities)
+        other_activity_name = st.text_input('Enter Other Activity') if 'Other' in selected_activities else None
 
         # Family History
-        selected_family_history = st.selectbox('Family History', common_family_history)
-        if selected_family_history == 'Other':
-            other_family_history_name = st.text_input('Enter Other Family History')
-        else:
-            other_family_history_name = None
+        selected_family_history = st.multiselect('Family History', common_family_history)
+        other_family_history_name = st.text_input('Enter Other Family History') if 'Other' in selected_family_history else None
 
         # Physical Examination Findings Section
         st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
@@ -155,11 +137,12 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
                 conn.commit()
             else:
-                # Get diagnosis ID for selected diagnosis
-                cursor.execute("SELECT diagnosis_id FROM Diagnosis WHERE name = %s", (selected_diagnosis,))
-                diagnosis_id = cursor.fetchone()[0]
-                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-                conn.commit()
+                for diagnosis in selected_diagnoses:
+                    cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s)", (diagnosis,))
+                    conn.commit()
+                    diagnosis_id = cursor.lastrowid
+                    cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+                    conn.commit()
 
             if other_medication_name:
                 cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (other_medication_name,))
@@ -168,10 +151,12 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
                 conn.commit()
             else:
-                cursor.execute("SELECT medication_id FROM Medication WHERE name = %s", (selected_medication,))
-                medication_id = cursor.fetchone()[0]
-                cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
-                conn.commit()
+                for medication in selected_medications:
+                    cursor.execute("INSERT INTO Medication (name) VALUES (%s)", (medication,))
+                    conn.commit()
+                    medication_id = cursor.lastrowid
+                    cursor.execute("INSERT INTO PatientCurrentMedication (patient_id, medication_id) VALUES (%s, %s)", (patient_id, medication_id))
+                    conn.commit()
 
             if other_allergy_name:
                 cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (other_allergy_name,))
@@ -180,10 +165,12 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
                 conn.commit()
             else:
-                cursor.execute("SELECT allergy_id FROM Allergy WHERE name = %s", (selected_allergy,))
-                allergy_id = cursor.fetchone()[0]
-                cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
-                conn.commit()
+                for allergy in selected_allergies:
+                    cursor.execute("INSERT INTO Allergy (name) VALUES (%s)", (allergy,))
+                    conn.commit()
+                    allergy_id = cursor.lastrowid
+                    cursor.execute("INSERT INTO PatientAllergy (patient_id, allergy_id) VALUES (%s, %s)", (patient_id, allergy_id))
+                    conn.commit()
 
             if other_surgery_name:
                 cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (other_surgery_name,))
@@ -192,10 +179,12 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
                 conn.commit()
             else:
-                cursor.execute("SELECT surgery_id FROM Surgery WHERE name = %s", (selected_surgery,))
-                surgery_id = cursor.fetchone()[0]
-                cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
-                conn.commit()
+                for surgery in selected_surgeries:
+                    cursor.execute("INSERT INTO Surgery (name) VALUES (%s)", (surgery,))
+                    conn.commit()
+                    surgery_id = cursor.lastrowid
+                    cursor.execute("INSERT INTO PatientSurgery (patient_id, surgery_id) VALUES (%s, %s)", (patient_id, surgery_id))
+                    conn.commit()
 
             if other_activity_name:
                 cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (other_activity_name,))
@@ -204,10 +193,12 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
                 conn.commit()
             else:
-                cursor.execute("SELECT activity_id FROM Activity WHERE name = %s", (selected_activity,))
-                activity_id = cursor.fetchone()[0]
-                cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
-                conn.commit()
+                for activity in selected_activities:
+                    cursor.execute("INSERT INTO Activity (name) VALUES (%s)", (activity,))
+                    conn.commit()
+                    activity_id = cursor.lastrowid
+                    cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
+                    conn.commit()
 
             if other_family_history_name:
                 cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (other_family_history_name,))
@@ -216,14 +207,16 @@ def new_patient_page():
                 cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, family_history_id) VALUES (%s, %s)", (patient_id, family_history_id))
                 conn.commit()
             else:
-                cursor.execute("SELECT family_history_id FROM FamilyHistory WHERE name = %s", (selected_family_history,))
-                family_history_id = cursor.fetchone()[0]
-                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, family_history_id) VALUES (%s, %s)", (patient_id, family_history_id))
-                conn.commit()
+                for family_history in selected_family_history:
+                    cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (family_history,))
+                    conn.commit()
+                    family_history_id = cursor.lastrowid
+                    cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, family_history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+                    conn.commit()
 
             # Insert physical examination findings
             cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_warmth, other_finding) VALUES (%s, %s, %s)", 
-                           (patient_id, joint_warmth, other_finding_text))
+                           (patient_id, 1 if joint_warmth else 0, other_finding_text))
             conn.commit()
 
             # Insert diagnostic tests
