@@ -129,6 +129,8 @@ def new_patient_page():
         st.markdown('<div class="box"><h4>Notes and Comments</h4></div>', unsafe_allow_html=True)
         notes_and_comments = st.text_area('Enter Notes and Comments')
 
+
+
 def new_patient_page():
     # Connect to the MySQL database
     conn = connect_to_database()
