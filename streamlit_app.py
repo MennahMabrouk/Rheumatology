@@ -168,23 +168,26 @@ def new_patient_page():
             patient_id = cursor.lastrowid
 
 
-        
         if other_diagnosis_name:
-                # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
-                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
-                # Retrieve the last auto-generated diagnosis_id
-                cursor.execute("SELECT LAST_INSERT_ID()")
-                diagnosis_id = cursor.fetchone()[0]
-                # Insert into PatientMedicalHistory with valid diagnosis_id
-                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
-        else:
-            # Insert selected diagnosis into the Diagnosis table if it doesn't exist
-            cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
+            # Insert 'Other' diagnosis into the Diagnosis table if it doesn't exist
+            cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (other_diagnosis_name,))
             # Retrieve the last auto-generated diagnosis_id
             cursor.execute("SELECT LAST_INSERT_ID()")
             diagnosis_id = cursor.fetchone()[0]
             # Insert into PatientMedicalHistory with valid diagnosis_id
             cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
+        else:
+            # Get the selected diagnosis from the common_diagnoses list
+            selected_diagnosis = [d for d in selected_diagnoses if d != 'Other']
+            if selected_diagnosis:
+                diagnosis = selected_diagnosis[0]
+                # Insert selected diagnosis into the Diagnosis table if it doesn't exist
+                cursor.execute("INSERT INTO Diagnosis (name) VALUES (%s) ON DUPLICATE KEY UPDATE diagnosis_id=LAST_INSERT_ID(diagnosis_id)", (diagnosis,))
+                # Retrieve the last auto-generated diagnosis_id
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                diagnosis_id = cursor.fetchone()[0]
+                # Insert into PatientMedicalHistory with valid diagnosis_id
+                cursor.execute("INSERT INTO PatientMedicalHistory (patient_id, diagnosis_id) VALUES (%s, %s)", (patient_id, diagnosis_id))
 
         if other_medication_name:
                 # Insert 'Other' medication into the Medication table if it doesn't exist
