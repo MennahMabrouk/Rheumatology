@@ -212,15 +212,16 @@ def new_patient_page():
                 cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (other_family_history_name,))
                 conn.commit()
                 family_history_id = cursor.lastrowid
-                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, family_history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+                cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
                 conn.commit()
             else:
                 for family_history in selected_family_history:
                     cursor.execute("INSERT INTO FamilyHistory (name) VALUES (%s)", (family_history,))
                     conn.commit()
                     family_history_id = cursor.lastrowid
-                    cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, family_history_id) VALUES (%s, %s)", (patient_id, family_history_id))
+                    cursor.execute("INSERT INTO PatientFamilyHistory (patient_id, history_id) VALUES (%s, %s)", (patient_id, family_history_id))
                     conn.commit()
+
 
             # Insert physical examination findings
             cursor.execute("INSERT INTO PhysicalExamination (patient_id, joint_warmth, other_finding) VALUES (%s, %s, %s)", 
