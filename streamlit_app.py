@@ -273,7 +273,7 @@ def new_patient_page():
                 activity_id = cursor.fetchone()[0]
                 # Insert into PatientActivity with valid activity_id
                 cursor.execute("INSERT INTO PatientActivity (patient_id, activity_id) VALUES (%s, %s)", (patient_id, activity_id))
-                
+
             # Inserting review of systems, physical examination, diagnostic tests, and notes and comments into respective tables
             cursor.execute("INSERT INTO ReviewOfSystems (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
                             (patient_id, joint_pain, joint_stiffness, swelling, fatigue, fever, skin_rashes, eye_problems))
