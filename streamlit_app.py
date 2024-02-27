@@ -111,8 +111,16 @@ def new_patient_page():
         # Physical Examination Findings Section
         st.markdown('<div class="box"><h4>Physical Examination Findings</h4></div>', unsafe_allow_html=True)
 
+        joint_swelling = st.checkbox('Joint Swelling')
+        joint_tenderness = st.checkbox('Joint Tenderness')
         joint_warmth = st.checkbox('Joint Warmth')
-        other_finding_text = st.text_area('Other Findings')
+        joint_redness = st.checkbox('Joint Redness')
+        limited_range_of_motion = st.checkbox('Limited Range of Motion')
+        muscle_weakness = st.checkbox('Muscle Weakness')
+        other_finding_checkbox = st.checkbox('Other')
+        other_finding_text = ""
+        if other_finding_checkbox:
+            other_finding_text = st.text_input('Specify Other Finding')
 
         # Diagnostic Tests Section
         st.markdown('<div class="box"><h4>Diagnostic Tests</h4></div>', unsafe_allow_html=True)
