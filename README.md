@@ -1,6 +1,6 @@
 # Rheumatology Patient Checking Chart
 
-![Rheumatoid Arthritis](https://www.ama-assn.org/sites/ama-assn.org/files/styles/image_ratio_16_9/public/2023-08/2023-08-08-RHEUMATOID_Index-1170x780.jpg?itok=n0-mrzaV)
+<img src="https://www.ama-assn.org/sites/ama-assn.org/files/styles/image_ratio_16_9/public/2023-08/2023-08-08-RHEUMATOID_Index-1170x780.jpg?itok=n0-mrzaV" alt="Rheumatoid Arthritis" width="500">
 This repository contains a Streamlit web application for managing patient information in a rheumatology clinic. The application allows users to input and retrieve patient data, including personal information, medical history, physical examination findings, diagnostic tests, and notes/comments.
 
 ## Setup
