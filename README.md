@@ -4,7 +4,7 @@
 
 This repository contains a Streamlit web application for managing patient information in a rheumatology clinic. The application allows users to input and retrieve patient data, including personal information, medical history, physical examination findings, diagnostic tests, and notes/comments.
 
-```
+
 ## Application Link
 
 You can access the application [here](https://rheumatology-9jcnnpbxcuvcyykbjaegyi.streamlit.app/#patient-information).
@@ -13,7 +13,6 @@ You can access the application [here](https://rheumatology-9jcnnpbxcuvcyykbjaegy
 
 The application uses a MySQL database for storing patient information. The database management system used is [phpMyAdmin](https://www.phpmyadmin.net/).
 
-...
 
 ### Requirements
 
