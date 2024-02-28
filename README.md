@@ -13,7 +13,7 @@ Make sure you have the following dependencies installed:
 - `scikit-learn==0.24.2`
 - `mysql-connector-python`
 
-You can install these dependencies using `pip` with the provided `requirements.txt` file.
+These dependencies are listed in the `requirements.txt` file. You can install them using `pip`:
 
 ```bash
 pip install -r requirements.txt
@@ -39,6 +39,27 @@ The application provides two main pages for navigation:
 
 1. **New Patient**: Allows users to input data for a new patient, including personal information, medical history, physical examination findings, diagnostic tests, and notes/comments.
 2. **Past Patient Reports**: Enables users to search for past patient records using either the patient ID or name. The application retrieves and displays relevant information for the selected patient.
+
+## Code Explanation
+
+### `streamlit_app.py`
+
+- **Database Connection**: The `connect_to_database` function establishes a connection to the MySQL database using the provided credentials. If an error occurs during the connection attempt, an error message is displayed.
+
+- **Custom CSS**: The `box_styles` variable defines custom CSS styles for styling boxes with different colors.
+
+- **Main Functionality**:
+  - The `main` function is the entry point of the Streamlit application. It sets up the application title and navigation menu.
+  - Depending on the selected page, either the `new_patient_page` or `past_patient_reports_page` function is called.
+
+- **New Patient Page**:
+  - The `new_patient_page` function handles the input of data for a new patient. It includes sections for patient information, medical history, physical examination findings, diagnostic tests, and notes/comments.
+  - Data input fields include text inputs, number inputs, select boxes, checkboxes, and multiselect boxes.
+  - Upon submission, the patient information is inserted into the database tables, and a success message is displayed.
+
+- **Past Patient Reports Page**:
+  - The `past_patient_reports_page` function allows users to search for past patient records based on patient ID or name.
+  - If a patient is found, relevant information is fetched from the database and displayed in colored boxes.
 
 ## Contributing
 
