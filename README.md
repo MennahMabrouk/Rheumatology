@@ -4,6 +4,7 @@
 
 This repository contains a Streamlit web application for managing patient information in a rheumatology clinic. The application allows users to input and retrieve patient data, including personal information, medical history, physical examination findings, diagnostic tests, and notes/comments.
 
+```
 ## Application Link
 
 You can access the application [here](https://rheumatology-9jcnnpbxcuvcyykbjaegyi.streamlit.app/#patient-information).
